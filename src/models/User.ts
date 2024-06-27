@@ -1,6 +1,8 @@
-interface User {
+import { ObjectId } from "mongodb"
+
+export default interface User {
   name: string
-  _id: string
+  _id: ObjectId | string
   nickname: string
   email: string
   twitter: string
