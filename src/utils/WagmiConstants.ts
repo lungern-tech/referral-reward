@@ -18,6 +18,8 @@ import {
   type Chain
 } from 'wagmi/chains'
 import { ConstantsUtil } from './ConstantsUtil'
+import { http } from 'viem'
+import { injected } from '@wagmi/core'
 
 export const WagmiConstantsUtil = {
   chains: [
@@ -44,7 +46,13 @@ export function getWagmiConfig(type: 'default' | 'email') {
     chains: WagmiConstantsUtil.chains,
     projectId: ConstantsUtil.ProjectId,
     metadata: ConstantsUtil.Metadata,
-    ssr: true
+    connectors: [injected()],
+    ssr: true,
+    transports: {
+      [sepolia.id]: http("https://eth-sepolia.g.alchemy.com/v2/9Qty87XLyHf_HKHPmSPpwWepafImsug6", {
+        batch: true
+      })
+    }
   }
 
   const emailConfig = {

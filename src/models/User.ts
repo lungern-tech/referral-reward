@@ -8,5 +8,6 @@ export default interface User {
   twitter: string
   discord: string
   wallet: Array<string>
-  createTime: Date
+  create_time: Date
+
 }

@@ -6,6 +6,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.3.7",
     "@ant-design/web3": "^1.15.1",
     "@ant-design/web3-wagmi": "^2.7.0",
     "@tanstack/react-query": "^5.48.0",
@@ -14,6 +15,7 @@
     "@web3modal/siwe": "5.0.3",
     "@web3modal/wagmi": "5.0.3",
     "antd": "^5.18.3",
+    "dayjs": "^1.11.11",
     "dotenv": "^16.4.5",
     "encoding": "^0.1.13",
     "lokijs": "^1.5.12",
@@ -21,6 +23,8 @@
     "next": "latest",
     "next-auth": "^5.0.0-beta.19",
     "pino-pretty": "^11.2.1",
+    "quill": "2.0.2",
+    "quill-delta": "^5.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "viem": "^2.16.2",

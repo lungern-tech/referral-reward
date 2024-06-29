@@ -11,7 +11,7 @@ import {
 
 declare module 'next-auth' {
   interface Session extends SIWESession {
-    address: string
+    address: `0x${string}`
     chainId: number
   }
 }
@@ -46,11 +46,12 @@ const providers = [
         if (!credentials?.message) {
           throw new Error('SiweMessage is undefined')
         }
-        const { message, signature } = credentials
+        const { message: temp, signature } = credentials
+        const message = temp as string
         const address = getAddressFromMessage(message)
         const chainId = getChainIdFromMessage(message)
 
-        const isValid = await verifySignature({ address, message, signature, chainId, projectId })
+        const isValid = await verifySignature({ address, message, signature: signature as string, chainId, projectId })
 
         if (isValid) {
           return {
@@ -74,6 +75,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     strategy: 'jwt'
   },
   callbacks: {
+    // async jwt({ token, user, account }) {
+    //   if (user) {
+    //     token.sub = user.id
+    //   }
+    //   return token
+    // },
     session({ session, token }) {
 
       if (!token.sub) {
@@ -81,7 +88,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       }
       const [, chainId, address] = token.sub.split(':')
       if (chainId && address) {
-        session.address = address
+        session.address = address as `0x${string}`
         session.chainId = parseInt(chainId, 10)
       }
       return session

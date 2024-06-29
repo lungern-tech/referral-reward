@@ -10,17 +10,22 @@ const UserCenter = () => {
     {
       key: '1',
       label: (<Link href={'/profile'}>Profile</Link>)
+    },
+    {
+      key: '2',
+      label: (<Link href={'/create'}>Create</Link>)
     }
   ]
 
   const session = useSession();
   return (
     <>
+      <w3m-button label="Login" />
       {
         session.status === 'authenticated' ?
           (<Dropdown menu={{ items: menus }}>
             <Avatar />
-          </Dropdown>) : <w3m-button label="Login" />
+          </Dropdown>) : null
       }
     </>
   )
