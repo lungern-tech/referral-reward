@@ -12,4 +12,6 @@ export default interface Task {
   updated_at: Date,
   deploy_hash: string
   contract_address: string
+  cover_image: string
+  description: string
 }

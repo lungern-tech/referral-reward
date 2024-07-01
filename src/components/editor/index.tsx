@@ -1,8 +1,9 @@
 import React, { Ref, forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef } from 'react';
-import Quill, { EmitterSource, Range } from 'quill';
+import Quill, { EmitterSource, QuillOptions, Range } from 'quill';
 import Delta from 'quill-delta';
 import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
+import "./index.css";
 
 
 // Editor is an uncontrolled React component
@@ -12,6 +13,7 @@ interface Props {
   style?: React.CSSProperties
   readOnly?: boolean
   defaultValue?: Delta
+  options?: Partial<QuillOptions>
   onTextChange?: (delta: Delta, oldDelta: Delta, source: string) => void
   onSelectionChange?: (
     range: Range,
@@ -20,10 +22,9 @@ interface Props {
   ) => void
 }
 
+// Editor is an uncontrolled React component
 const Editor = forwardRef<Quill, Props>(
-  ({ className, style, readOnly, defaultValue, onTextChange, onSelectionChange }, ref) => {
-
-    const localRef = useRef<Quill>(null);
+  ({ readOnly, defaultValue, onTextChange, onSelectionChange, options }, ref) => {
     const containerRef = useRef(null);
     const defaultValueRef = useRef(defaultValue);
     const onTextChangeRef = useRef(onTextChange);
@@ -35,8 +36,9 @@ const Editor = forwardRef<Quill, Props>(
     });
 
     useEffect(() => {
-      localRef.current?.enable(!readOnly);
-    }, [localRef, readOnly]);
+      // @ts-ignore
+      ref.current?.enable(!readOnly);
+    }, [ref, readOnly]);
 
     useEffect(() => {
       const container = containerRef.current;
@@ -45,9 +47,11 @@ const Editor = forwardRef<Quill, Props>(
       );
       const quill = new Quill(editorContainer, {
         theme: 'snow',
+        ...options
       });
 
-      localRef.current = quill;
+      // @ts-ignore
+      ref.current = quill;
 
       if (defaultValueRef.current) {
         quill.setContents(defaultValueRef.current);
@@ -62,17 +66,13 @@ const Editor = forwardRef<Quill, Props>(
       });
 
       return () => {
-        localRef.current = null;
+        // @ts-ignore
+        ref.current = null;
         container.innerHTML = '';
       };
-    }, [localRef]);
+    }, [ref]);
 
-    useImperativeHandle<Quill, Quill>(
-      ref,
-      () => localRef.current
-    )
-
-    return <div className={className} style={style} ref={containerRef}></div>;
+    return <div ref={containerRef}></div>;
   },
 );
 
