@@ -1,46 +1,42 @@
 "use client"
-import { useWriteContract } from 'wagmi'
 import { abi } from '@/abi/RewardFactory.sol/RewardFactory.json'
-import { sepolia } from "viem/chains"
+import ChainMap from '@/utils/ChainMap'
 import { Button, notification } from "antd"
+import { useSession } from 'next-auth/react'
+import React, { useEffect } from 'react'
 import { parseEther } from "viem"
-import { watchContractEvent } from '@wagmi/core'
-import { wagmiConfig } from '@/context/wallet'
-import { LoadingOutlined } from '@ant-design/icons'
+import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 
 
-export default function ({ account, taskId }: { account: `0x${string}`, taskId: string }) {
+export default function ({ children, reward, reward_count, chain, start, end }: { reward: number, reward_count: number, chain: number, start: number, end: number, children: React.ReactNode }) {
 
-  const { writeContract } = useWriteContract()
+  const session = useSession()
+
+  const { data: hash, writeContract } = useWriteContract()
+
+  console.log("hash: ", hash)
+
+  const { isLoading, isSuccess } = useWaitForTransactionReceipt({
+    hash,
+  })
+
+  const realChain = ChainMap[chain]
+
+  console.log(realChain)
 
   const createReward = () => {
     writeContract({
       abi,
       address: '0xa1c02b0ce440104139c2b8d498f84cc343e273f0',
       functionName: 'createNewReward',
-      args: [1000, 10000000, 0, 0],
-      chain: sepolia,
-      account,
-      chainId: sepolia.id,
+      args: [Math.round(reward * 10 ** realChain.nativeCurrency.decimals), reward_count, start, end],
+      chain: realChain,
+      account: session.data.address,
+      chainId: realChain.id,
       value: parseEther('0.01')
     }, {
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         console.log('success: ', data)
-
-        notification.info({
-          message: 'Success',
-          description: 'Reward created successfully',
-          icon: <LoadingOutlined style={{ color: 'green' }} />,
-          duration: 0
-        })
-
-        const unwatch = watchContractEvent(wagmiConfig, {
-          address: '0xa1c02b0ce440104139c2b8d498f84cc343e273f0',
-          abi,
-          onLogs(logs) {
-            console.log('New logs!', logs)
-          },
-        })
       },
       onError(error, variables, context) {
         console.log('error: ', error, variables, context)
@@ -48,9 +44,27 @@ export default function ({ account, taskId }: { account: `0x${string}`, taskId: 
     },)
   }
 
+  useEffect(() => {
+    if (isSuccess) {
+      notification.success({
+        message: 'Success',
+        description: (
+          <div>
+            You have created new reward. Check <a target='_blank' href={`${realChain.blockExplorers.default.url}/tx/${hash}`}>{hash}</a> for more information
+          </div>
+        ),
+        duration: 10,
+        showProgress: true,
+        pauseOnHover: true
+      })
+    }
+  }, [isSuccess])
+
   return (
     <>
-      <Button onClick={createReward}>提交</Button>
+      <Button loading={isLoading} onClick={createReward}>{
+        children
+      }</Button>
     </>
   )
 }

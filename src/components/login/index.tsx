@@ -1,19 +1,15 @@
 "use client";
 
 import { Avatar, Dropdown } from "antd";
-import { useSession } from "next-auth/react"
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 const UserCenter = () => {
 
   const menus = [
     {
-      key: '1',
-      label: (<Link href={'/profile'}>Profile</Link>)
-    },
-    {
-      key: '2',
-      label: (<Link href={'/create'}>Create</Link>)
+      key: '3',
+      label: (<Link href={'/account'}>User Center</Link>)
     }
   ]
 

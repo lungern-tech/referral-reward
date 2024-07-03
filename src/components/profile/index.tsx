@@ -1,10 +1,10 @@
 "use client"
 
-import User from "@/models/User"
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
 import Title from "@/components/title"
+import User from "@/models/User"
 import { Button, Input, notification } from "antd"
+import { useSession } from "next-auth/react"
+import { useEffect, useState } from "react"
 
 const getUserProfile = async () => {
   const userInfo = await fetch("http://localhost:3000/api/profile")
@@ -54,12 +54,11 @@ export default function () {
   return (
     <div className="px-16 py-8">
       <div>
-        <Title title="Username"></Title>
+        <Title title="Name"></Title>
         <Input value={nickname} onChange={(e) => setNickname(e.target.value)} className="mt-4 px-4 py-2" />
         <Button onClick={updateUserName} className="px-8 py-5 mt-4 font-bold" type="primary">Save</Button>
       </div>
       <div>
-        <Title title="Social Media Accounts"></Title>
         <div>
 
         </div>

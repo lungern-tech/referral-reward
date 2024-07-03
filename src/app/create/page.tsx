@@ -1,16 +1,17 @@
 "use client";
-import Task from "@/models/Task";
-import { Button, DatePicker, Input, Select, Upload } from "antd";
-import { createRef, useRef, useState } from "react";
-import { useRouter } from 'next/navigation'
-import dayjs from "dayjs";
-import { opBNB, bsc, mainnet, polygon } from "viem/chains";
 import Editor from "@/components/editor";
-import Delta from "quill-delta";
+import Task from "@/models/Task";
+import ChainMap from "@/utils/ChainMap";
 import { InboxOutlined } from "@ant-design/icons";
+import { Button, DatePicker, Input, Select, Upload } from "antd";
 import { UploadChangeParam } from "antd/es/upload";
+import dayjs from "dayjs";
 import Image from "next/image";
+import { useRouter } from 'next/navigation';
 import Quill, { QuillOptions } from "quill";
+import Delta from "quill-delta";
+import { useRef, useState } from "react";
+
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -93,18 +94,11 @@ export default function create() {
       <Input className="mt-5 px-6 py-3 text-base" readOnly disabled />
       <div className="text-xl font-bold mt-10">Chains</div>
       <Select className="text-base mt-5 w-2/4" value={taskInfo.chain} onChange={(e) => updateTaskInfo({ chain: e })} >
-        <Option value={opBNB.id}>
-          <div>opBNB</div>
-        </Option>
-        <Option value={bsc.id}>
-          <div>BNB</div>
-        </Option>
-        <Option value={mainnet.id}>
-          <div>ETH</div>
-        </Option>
-        <Option value={polygon.id}>
-          <div>Polygon</div>
-        </Option>
+        {
+          Object.entries(ChainMap).map(([key, value]) => (
+            <Option key={key} value={key}>{value.name}</Option>
+          ))
+        }
       </Select>
       <div className="text-xl font-bold mt-10">Reward</div>
       <Input type="number" min={0} className="mt-5" value={taskInfo.reward} onChange={(e) => updateTaskInfo({ reward: e.target.value })} addonAfter={addonAfter}>
@@ -134,7 +128,12 @@ export default function create() {
           </div >
         )
       }
-
+      <div className="mt-10">Proof Method</div>
+      <Select className="text-base mt-5 w-2/4" defaultValue="manual">
+        <Option value="manual">
+          Manual
+        </Option>
+      </Select>
       <div className="mt-10">
         <Button size="large" type="primary" onClick={createNewReward}>Submit</Button>
         <Button size="large" className="ml-4">Cancel</Button>

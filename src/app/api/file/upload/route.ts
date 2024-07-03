@@ -33,19 +33,9 @@
 //   }
 // }
 
-import path from 'path';
-import fs, { writeFile } from 'fs/promises';
+import saveFile from '@/utils/SaveFile';
 import { NextResponse } from 'next/server';
-
-const saveFile = async (file: File, name: string) => {
-  const uniqueSuffix = Date.now() + '_' + Math.round(Math.random() * 1E9);
-  let appendix = name.split('.').pop();
-  const filename = `${uniqueSuffix}.${appendix}`;
-  const uploadPath = path.join(process.cwd(), 'public', 'uploads', filename);
-  const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(uploadPath, buffer);
-  return filename;
-}
+import path from 'path';
 
 
 export async function POST(request) {
@@ -53,7 +43,8 @@ export async function POST(request) {
     const formData = await request.formData();
     const file = formData.get('file');
     const name = formData.get('name');
-    const savedFilename = await saveFile(file, name);
+    const storagePath = path.join(process.cwd(), 'public', 'uploads');
+    const savedFilename = await saveFile(file, name, storagePath);
 
     return NextResponse.json({ filename: savedFilename });
   } catch (error) {

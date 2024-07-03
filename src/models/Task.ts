@@ -1,5 +1,8 @@
+import { ObjectId } from "mongodb"
+
 export default interface Task {
-  creator: string
+  _id?: ObjectId | string
+  creator: string | ObjectId
   title: string
   chain: number
   start_time: Date

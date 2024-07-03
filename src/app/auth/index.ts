@@ -1,18 +1,22 @@
 
 
+import {
+  getAddressFromMessage,
+  getChainIdFromMessage,
+  verifySignature,
+  type SIWESession
+} from '@web3modal/siwe'
 import NextAuth from 'next-auth'
 import credentialsProvider from 'next-auth/providers/credentials'
-import {
-  type SIWESession,
-  verifySignature,
-  getChainIdFromMessage,
-  getAddressFromMessage
-} from '@web3modal/siwe'
+
+import client from "@/lib/mongodb"
+import User from '@/models/User'
 
 declare module 'next-auth' {
   interface Session extends SIWESession {
     address: `0x${string}`
     chainId: number
+    id: string
   }
 }
 
@@ -81,12 +85,15 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     //   }
     //   return token
     // },
-    session({ session, token }) {
-
+    async session({ session, token }) {
       if (!token.sub) {
         return session
       }
       const [, chainId, address] = token.sub.split(':')
+      const user = await client.collection<User>("user").findOne({
+        wallet: address
+      })
+      session.id = user._id as string
       if (chainId && address) {
         session.address = address as `0x${string}`
         session.chainId = parseInt(chainId, 10)

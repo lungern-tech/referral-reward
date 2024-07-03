@@ -1,34 +1,52 @@
+import { auth } from "@/app/auth";
+import Proof from "@/components/proof";
 import Title from "@/components/title";
+import client from "@/lib/mongodb";
+import Interaction from "@/models/Interaction";
+import Task from "@/models/Task";
+import { ObjectId } from "mongodb";
+import Image from "next/image";
 
-export default function () {
+
+export default async function ({ params }: { params: { id: string } }) {
+
+  const task = await client.collection<Task>("task").findOne({ _id: new ObjectId(params.id) })
+  const session = await auth()
+  const joinStatus = await client.collection<Interaction>("interaction").findOne({ task_id: new ObjectId(params.id), user_id: new ObjectId(session.id) })
+
   return (
     <div className="grid grid-cols-5">
-      <div className="col-span-3 pr-12 border-r" >
-        <div className="text-3xl font-bold">TaskOn x Infinity Ground x Solana Name Service team up for a $500 USDC Giveaway!
+      <div className="col-span-3 pr-12 pb-16 border-r" >
+        <Image className="rounded-md" width={1000} height={700} alt="cover_image" src={`/uploads/${task.cover_image}`}></Image>
+        <div className="text-3xl font-bold mt-8">
+          {task.title}
         </div>
         <div className="flex mt-4 mb-8">
           <div className="text-green-500 bg-gray-500 px-4 py-1 rounded-md mr-2">Ongoing</div>
-          <div className="text-white bg-gray-500 px-4 py-1 rounded-md mr-2">(UTC+8) 2024-06-24 20:00 ～ 06-30 18:00
+          <div className="text-white bg-gray-500 px-4 py-1 rounded-md mr-2">(UTC+8) {new Date(task.start_time).toLocaleString()} ～
+            {
+              new Date(task.end_time).toLocaleDateString()
+            }
           </div>
         </div>
         <div className="border border-b-0"></div>
         <Title title="Task"></Title>
-        <Title title="Mandatory Task"></Title>
-        <div className="mt-8">
-          <p>
-            We are excited to host a special giveaway with the Infinity Ground and SNS team.
-          </p>
-          <p>
-            The event will give away a total of $500 USDC to 25 lucky winners.
-
-          </p>
-          <p>Don’t miss it! To be eligible for the  reward, follow the rules below.</p>
-          <p> 📣Event Period: Jun 24 th, 2024 - Jun 30 th, 2024</p>
-          <p>🏆Prize Pool:</p>
-          <p>🔸$500 USDC</p>
-          <p>🔸Each eligible participant will get 20USDT.</p>
+        <div className="mt-4">Register with This Referral Code: `f4Ajk6`</div>
+        <div className="">
+          {
+            joinStatus ? (
+              <div>You have joined this Campaign</div>
+            ) : (
+              <div className="mt-4" >
+                <Proof taskId={String(task._id)}></Proof>
+              </div >
+            )
+          }
         </div>
-      </div>
+        <div className="mt-8">
+          <div dangerouslySetInnerHTML={{ __html: task.description || "<p></p>" }}></div>
+        </div>
+      </div >
       <div className="col-span-2 pl-12">
         <Title title="Reward"></Title>
         <div className="rounded-lg bg-gray-300 overflow-hidden text-white mt-4">
