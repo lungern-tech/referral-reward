@@ -7,6 +7,7 @@ import "dotenv/config"
 import { SessionProvider } from "next-auth/react"
 import { headers } from 'next/headers'
 import { WagmiProvider, cookieToInitialState } from 'wagmi'
+import "../../styles/custom.scss"
 import "../../styles/global.css"
 export const metadata = {
   title: 'Next.js',
@@ -21,15 +22,19 @@ export default function RootLayout({
 }) {
   const initialState = cookieToInitialState(config, headers().get('cookie'))
   return (
-    <html lang="en" className="min-h-full relative pb-16">
-      <body className="min-h-full">
+    <html lang="en" className="h-full">
+      <body className="bg-black text-white dark">
         <WagmiProvider config={wagmiConfig}>
           <QueryClientProvider>
             <ContextProvider initialState={initialState}>
               <SessionProvider>
-                <Header />
-                <div className="mx-auto max-w-[1280px] xl:w-[1280px]">
-                  {children}
+                <div className="flex min-h-full flex-col">
+                  <Header />
+                  <div className="flex flex-1 min-h-full flex-col justify-stretch dark">
+                    <div className="flex max-w-[1280px] mx-auto">
+                      {children}
+                    </div>
+                  </div>
                 </div>
                 <Footer />
               </SessionProvider>

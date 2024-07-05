@@ -4,7 +4,8 @@ export enum InteractStatus {
   Pending = 'pending',
   Approved = 'approved',
   Joined = 'joined',
-  Rejected = 'rejected'
+  Rejected = 'rejected',
+  RewardSent = 'rewardSent'
 }
 export default interface Interaction {
   _id?: ObjectId | string
@@ -16,4 +17,5 @@ export default interface Interaction {
   user_id: ObjectId | string
   created_at: Date
   status: InteractStatus
+  transition_hash?: string
 }

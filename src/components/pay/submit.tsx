@@ -4,30 +4,26 @@ import ChainMap from '@/utils/ChainMap'
 import { Button, notification } from "antd"
 import { useSession } from 'next-auth/react'
 import React, { useEffect } from 'react'
-import { parseEther } from "viem"
-import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
+import { decodeEventLog, parseEther } from "viem"
+
+import { useWaitForTransactionReceipt, useWriteContract, } from 'wagmi'
 
 
-export default function ({ children, reward, reward_count, chain, start, end }: { reward: number, reward_count: number, chain: number, start: number, end: number, children: React.ReactNode }) {
+export default function ({ children, reward, reward_count, chain, start, end, task_id }: { reward: number, reward_count: number, chain: number, start: number, end: number, children: React.ReactNode, task_id: string }) {
 
   const session = useSession()
 
   const { data: hash, writeContract } = useWriteContract()
-
-  console.log("hash: ", hash)
-
-  const { isLoading, isSuccess } = useWaitForTransactionReceipt({
+  const { isLoading, isSuccess, data } = useWaitForTransactionReceipt({
     hash,
   })
 
   const realChain = ChainMap[chain]
 
-  console.log(realChain)
-
   const createReward = () => {
     writeContract({
       abi,
-      address: '0xa1c02b0ce440104139c2b8d498f84cc343e273f0',
+      address: '0xa64a313c856b93f23e423924d84ab6078f995059',
       functionName: 'createNewReward',
       args: [Math.round(reward * 10 ** realChain.nativeCurrency.decimals), reward_count, start, end],
       chain: realChain,
@@ -57,6 +53,32 @@ export default function ({ children, reward, reward_count, chain, start, end }: 
         showProgress: true,
         pauseOnHover: true
       })
+
+      data.logs.forEach(log => {
+        try {
+          const decodedLog = decodeEventLog({
+            abi,
+            data: log.data,
+            topics: log.topics,
+          })
+          if (decodedLog.eventName === 'CreateRewardSuccess') {
+            let contractAddress = (decodedLog.args as unknown as { contractAddress: string }).contractAddress
+            fetch(`/api/task/update`, {
+              method: "POST",
+              body: JSON.stringify({
+                contract_address: contractAddress,
+                deploy_hash: hash,
+                task_id,
+              })
+            }).then(res => res.json()).then(data => {
+
+            })
+          }
+        } catch (error) {
+          console.error('Failed to decode log:', error)
+        }
+      })
+
     }
   }, [isSuccess])
 

@@ -90,9 +90,18 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         return session
       }
       const [, chainId, address] = token.sub.split(':')
-      const user = await client.collection<User>("user").findOne({
+      let user = await client.collection<User>("user").findOne({
         wallet: address
       })
+      if (!user) {
+        await client.collection<User>('user').insertOne({
+          wallet: address,
+          create_time: new Date()
+        })
+        user = await client.collection<User>("user").findOne({
+          wallet: address
+        })
+      }
       session.id = user._id as string
       if (chainId && address) {
         session.address = address as `0x${string}`

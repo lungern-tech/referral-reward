@@ -1,43 +1,21 @@
+import { injected } from '@wagmi/core'
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
+import { http } from 'viem'
 import {
-  arbitrum,
-  aurora,
-  avalanche,
-  base,
-  bsc,
-  celo,
-  gnosis,
   mainnet,
-  optimism,
-  polygon,
-  zkSync,
-  zora,
+  opBNB,
+  opBNBTestnet,
   sepolia,
-  optimismSepolia,
-  baseSepolia,
   type Chain
 } from 'wagmi/chains'
 import { ConstantsUtil } from './ConstantsUtil'
-import { http } from 'viem'
-import { injected } from '@wagmi/core'
 
 export const WagmiConstantsUtil = {
   chains: [
     mainnet,
-    arbitrum,
-    polygon,
-    avalanche,
-    bsc,
-    optimism,
-    gnosis,
-    zkSync,
-    zora,
-    base,
-    celo,
-    aurora,
     sepolia,
-    optimismSepolia,
-    baseSepolia
+    opBNB,
+    opBNBTestnet
   ] as [Chain, ...Chain[]]
 }
 

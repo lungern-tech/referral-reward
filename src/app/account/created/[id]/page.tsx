@@ -1,10 +1,14 @@
 "use client"
+import { abi } from '@/abi/Reward.sol/Reward.json';
 import Interaction, { InteractStatus } from "@/models/Interaction";
 import Task from "@/models/Task";
 import User from "@/models/User";
-import { Button, Image, Table } from "antd";
+import ChainMap from '@/utils/ChainMap';
+import { Button, Image, Table, notification } from "antd";
 import { ColumnsType } from "antd/es/table";
+import { useSession } from 'next-auth/react';
 import { useEffect, useState } from "react";
+import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 
 type IJoinItem = Interaction & { user: [User] }
 
@@ -12,10 +16,15 @@ export default function ({ params: { id } }: { params: { id: string } }) {
 
   const [task, setTask] = useState<Task>(null)
 
+  const session = useSession()
+
   const pageSize = 10
-  const [page_number, setPageNumber] = useState(1)
+  const [page_number] = useState(1)
   const [joinedList, setJoinedList] = useState<IJoinItem[]>([])
   const [totalCount, setTotalCount] = useState(0)
+
+  const [pending, setPending] = useState(false)
+  const [record, setRecord] = useState<Interaction>(null)
 
   useEffect(() => {
     fetch(`/api/task/search?id=${id}`).then(res => res.json()).then(data => {
@@ -80,21 +89,89 @@ export default function ({ params: { id } }: { params: { id: string } }) {
       title: 'Action',
       dataIndex: 'action',
       key: 'action',
-      render: (value, record, index) => {
-        if (record.status === InteractStatus.Joined) {
+      render: (value, current, index) => {
+        if (current.status === InteractStatus.Joined) {
           return (
-            <>
-              <Button>Approve</Button>
-              <Button>Reject</Button>
-            </>
+            <div className='flex'>
+              <Button className='mr-2' type='primary' disabled={pending} loading={current._id === record?._id && pending} onClick={() => sendReward(current)}>Approve</Button>
+              <Button >Reject</Button>
+            </div>
           )
         }
       }
     }
   ]
+
+  const { data: hash, writeContract } = useWriteContract()
+  const { isSuccess, isError, } = useWaitForTransactionReceipt({
+    hash,
+    pollingInterval: 3_000
+  })
+
+  useEffect(() => {
+    if (isSuccess) {
+      notification.success({
+        message: "Success",
+        description: "Reward sent successfully",
+      })
+      handleSuccess()
+      setPending(false)
+      setRecord(null)
+    }
+  }, [isSuccess])
+
+  const sendReward = (record: Interaction & { user: [User] }) => {
+    const realChain = ChainMap[task.chain]
+    setPending(true)
+    setRecord(record)
+    const address = record.user[0].wallet
+    writeContract({
+      abi,
+      address: task.contract_address as `0x${string}`,
+      functionName: 'sendReward',
+      args: [address],
+      chain: realChain,
+      account: session.data.address,
+      chainId: realChain.id,
+    }, {
+      onSuccess: async (data) => {
+        console.log(data)
+      },
+      onError(error, variables, context) {
+        const errorName = (error.cause as { data: { errorName: string } }).data.errorName
+        handleError(errorName)
+      },
+    },)
+  }
+
+  const handleSuccess = () => {
+    fetch(`/api/interact`, {
+      method: "PUT",
+      body: JSON.stringify({
+        id: record._id,
+        task_id: record.task_id,
+        transition_hash: hash,
+      })
+    })
+    notification.success({
+      message: "Success",
+      description: "Reward sent successfully",
+    })
+  }
+
+  const handleError = (errorName: string) => {
+    if (errorName === "WalletHasReceivedReward") {
+      notification.error({
+        message: "Error",
+        description: "This wallet has already received the reward",
+      })
+    }
+    setPending(false)
+    setRecord(null)
+  }
+
   return (
     <div>
-      {task?.chain}
       <Table rowKey={"_id"} columns={columns} dataSource={joinedList}></Table>
     </div>
   )

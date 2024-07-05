@@ -60,7 +60,7 @@ export default async function ({ params }: { params: { id: string } }) {
           new Date(task.end_time).getTime()
         }
         chain={task.chain}
-        id={params.id}
+        task_id={params.id}
       >Submit</Submit>
     </div>
   )

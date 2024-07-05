@@ -7,8 +7,8 @@ import Task from "@/models/Task";
 import { ObjectId } from "mongodb";
 import Image from "next/image";
 
-
 export default async function ({ params }: { params: { id: string } }) {
+
 
   const task = await client.collection<Task>("task").findOne({ _id: new ObjectId(params.id) })
   const session = await auth()

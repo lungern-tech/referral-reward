@@ -2,6 +2,7 @@
 
 import { Button, notification } from "antd"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import Upload from "../upload"
 
@@ -9,12 +10,14 @@ export default function ({ taskId }: { taskId: string }) {
 
   const [file, setFile] = useState("")
 
+  const router = useRouter()
+
   const join = async () => {
     if (!file) return
     let formData = new FormData()
     formData.append('taskId', taskId)
     formData.append('proof', file)
-    await fetch('/api/join', {
+    await fetch('/api/task/join', {
       method: "POST",
       body: formData,
     }).then(() => {
@@ -22,6 +25,7 @@ export default function ({ taskId }: { taskId: string }) {
         message: "Success",
         description: "Join success"
       })
+      router.refresh()
     })
   }
 
