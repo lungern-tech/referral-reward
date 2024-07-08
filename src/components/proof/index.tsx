@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import Upload from "../upload"
 
-export default function ({ taskId }: { taskId: string }) {
+export default function ({ taskId, status }: { taskId: string, status: boolean }) {
 
   const [file, setFile] = useState("")
 
@@ -35,14 +35,23 @@ export default function ({ taskId }: { taskId: string }) {
   return (
     <>
       {
-        file ? (
-          <Image className="rounded-md" src={`/uploads/proof/${file}`} width={1000} height={500} alt="proof">
-          </Image>
-        ) : (
-          <Upload proofChange={fileChange}></Upload>
-        )
+        status ? (
+          <div className="w-full text-center px-4 py-2 border rounded-md mt-4">You have joined this Campaign</div>
+        ) :
+          (
+            <>
+              {
+                file ? (
+                  <Image className="rounded-md" src={`/uploads/proof/${file}`} width={1000} height={500} alt="proof">
+                  </Image>
+                ) : (
+                  <Upload proofChange={fileChange}></Upload>
+                )
+              }
+              <Button className="mt-4 w-full" size="large" onClick={join}>Complete</Button>
+            </>
+          )
       }
-      <Button className="mt-4 w-full" size="large" onClick={join}>Complete</Button>
     </>
   )
 }

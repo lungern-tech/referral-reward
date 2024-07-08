@@ -15,34 +15,29 @@ export default async function ({ params }: { params: { id: string } }) {
   const joinStatus = await client.collection<Interaction>("interaction").findOne({ task_id: new ObjectId(params.id), user_id: new ObjectId(session.id) })
 
   return (
-    <div className="grid grid-cols-5">
-      <div className="col-span-3 pr-12 pb-16 border-r" >
-        <Image className="rounded-md" width={1000} height={700} alt="cover_image" src={`/uploads/${task.cover_image}`}></Image>
+    <div className="grid grid-cols-5 mt-8">
+      <div className="col-span-3 pr-12 pb-8 border-r border-gray-dark-500" >
+        <Image className="rounded-md border-gray-dark-500 border" width={1000} height={700} alt="cover_image" src={`/uploads/${task.cover_image}`}></Image>
         <div className="text-3xl font-bold mt-8">
           {task.title}
         </div>
         <div className="flex mt-4 mb-8">
-          <div className="text-green-500 bg-gray-500 px-4 py-1 rounded-md mr-2">Ongoing</div>
-          <div className="text-white bg-gray-500 px-4 py-1 rounded-md mr-2">(UTC+8) {new Date(task.start_time).toLocaleString()} ～
+          <div className="text-green-500 bg-white px-4 py-1 rounded-md mr-2 font-semibold">Ongoing</div>
+          <div className="text-black bg-white px-4 py-1 rounded-md mr-2 font-semibold">(UTC+8) {new Date(task.start_time).toLocaleString()} ～
             {
               new Date(task.end_time).toLocaleDateString()
             }
           </div>
         </div>
-        <div className="border border-b-0"></div>
-        <Title title="Task"></Title>
+        <div className="border border-b-0 border-gray-dark-500"></div>
+        <div className="mt-8 font-bold text-2xl">Task</div>
         <div className="mt-4">Register with This Referral Code: `f4Ajk6`</div>
         <div className="">
-          {
-            joinStatus ? (
-              <div>You have joined this Campaign</div>
-            ) : (
-              <div className="mt-4" >
-                <Proof taskId={String(task._id)}></Proof>
-              </div >
-            )
-          }
+          <div className="mt-4" >
+            <Proof status={joinStatus} taskId={String(task._id)}></Proof>
+          </div >
         </div>
+        <div className="mt-8 font-bold text-2xl">Guide</div>
         <div className="mt-8">
           <div dangerouslySetInnerHTML={{ __html: task.description || "<p></p>" }}></div>
         </div>
@@ -61,13 +56,14 @@ export default async function ({ params }: { params: { id: string } }) {
                 <div>Token</div>
                 <div className="ml-auto inline-flex">
                   <span>20</span>
-                  <span>USDC</span>
-                  <span>/winner</span>
+                  <span>USDT</span>
+                  <span>/First-come</span>
                 </div>
               </div>
+              <div>1000 Winners</div>
             </div>
           </div>
-          <div className="p-6 font-bold text-black">
+          {/* <div className="p-6 font-bold text-black">
             <div className="text-xl ">Bonus</div>
             <div className="mt-4 shadow rounded-md bg-green-50 p-4">
               <div className="flex">
@@ -79,7 +75,7 @@ export default async function ({ params }: { params: { id: string } }) {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
         <Title title="Participants Info"></Title>
         <div className="flex mt-4">

@@ -23,20 +23,20 @@ export default function RootLayout({
   const initialState = cookieToInitialState(config, headers().get('cookie'))
   return (
     <html lang="en" className="h-full">
-      <body className="bg-black text-white dark">
+      <body className="bg-black text-white dark custom-scrollbar h-full">
         <WagmiProvider config={wagmiConfig}>
           <QueryClientProvider>
             <ContextProvider initialState={initialState}>
               <SessionProvider>
                 <div className="flex min-h-full flex-col">
                   <Header />
-                  <div className="flex flex-1 min-h-full flex-col justify-stretch dark">
+                  <div className="flex min-h-full flex-1 flex-col justify-stretch dark">
                     <div className="flex max-w-[1280px] mx-auto">
                       {children}
                     </div>
                   </div>
+                  <Footer />
                 </div>
-                <Footer />
               </SessionProvider>
             </ContextProvider>
           </QueryClientProvider>

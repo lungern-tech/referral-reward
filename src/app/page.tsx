@@ -1,20 +1,37 @@
 import Reward from "@/components/card/Reward";
 import HorizontalScroll from "@/components/horizontal-scroll";
-import Title from "@/components/title";
 import client from "@/lib/mongodb";
+import Task from "@/models/Task";
+import User from "@/models/User";
 
 export default async function Home() {
 
-  const list = await client.collection("task").find({}).limit(10).toArray()
+  const list = await client.collection<Task>("task").aggregate([
+    {
+      $match: {
+        status: "created"
+      }
+    },
+    {
+      $lookup: {
+        from: "user",
+        localField: "creator",
+        foreignField: "_id",
+        as: "user"
+      }
+    },
+  ]).toArray() as Array<Task & { user: [User] }>
+
+  console.log(list)
 
   return (
     <div>
-      <Title title="奖励"></Title>
+      <div className="mt-8 font-bold text-2xl">Referral Campaign</div>
       <HorizontalScroll>
         {
           list.map((e, index) => {
             return (
-              <Reward task={e} key={index} ></Reward>
+              <Reward className="mt-4 hover:shadow-sm hover:scale-110 transition" task={e} key={index} ></Reward>
             )
           })
         }

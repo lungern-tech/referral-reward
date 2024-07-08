@@ -1,4 +1,8 @@
 .custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
   &::-webkit-scrollbar-thumb {
     background: #2b2c39;
     border-radius: 4px;
@@ -10,9 +14,9 @@
   }
 }
 
-.border-b-gray-dark-500 {
+.border-gray-dark-500 {
   --tw-border-opacity: 1;
-  border-bottom-color: rgb(26 26 26 / var(--tw-border-opacity));
+  border-color: rgb(26 26 26 / var(--tw-border-opacity));
 }
 
 .dark {
