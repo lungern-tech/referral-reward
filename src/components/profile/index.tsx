@@ -1,13 +1,12 @@
 "use client"
 
-import Title from "@/components/title"
 import UserContext from "@/context/UserContext"
 import User from "@/models/User"
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons"
 import { Button, Input, Upload, notification } from "antd"
 import { UploadChangeParam } from "antd/es/upload"
 import Image from "next/image"
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 
 const updateUserProfile = async (userInfo: Partial<User>) => {
   await fetch("http://localhost:3000/api/profile", {
@@ -22,10 +21,14 @@ const updateUserProfile = async (userInfo: Partial<User>) => {
 export default function () {
   const [nickname, setNickname] = useState<string>("")
   const [loading, setLoading] = useState(false)
-
   const { user, updateUser } = useContext(UserContext)
 
+  useEffect(() => {
+    setNickname(user.nickname)
+  }, [user])
+
   const updateUserName = () => {
+    setLoading(true)
     updateUserInfo({ nickname }).then(() => {
       notification.success({
         message: "Update successfully",
@@ -35,6 +38,8 @@ export default function () {
         message: "Update failed",
         description: err.message,
       })
+    }).finally(() => {
+      setLoading(false)
     })
   }
 
@@ -44,28 +49,22 @@ export default function () {
     })
   }
 
-  const changeAvatar = () => {
-
-  }
 
   const handleAvatarChange = (info: UploadChangeParam) => {
     let formData = new FormData()
     formData.append('file', info.file as unknown as File)
     formData.append('name', info.file.name)
-    setLoading(true)
     fetch('/api/file/upload', {
       method: "POST",
       body: formData
     }).then(res => res.json()).then((avatar: { filename: string }) => {
       updateUserInfo({ avatar: avatar.filename })
-    }).finally(() => {
-      setLoading(false)
     })
   }
 
   return (
     <div className="px-16 py-8">
-      <div className="">
+      <div className="flex items-center">
         <div className="relative">
           <Image className="size-[100px] rounded-full" src={`/uploads/${user?.avatar}`} width={56} height={56} alt="avatar"></Image>
           <div className="absolute left-0 top-0 z-10 bg-gray-700/70 size-[100px] rounded-full overflow-hidden opacity-0 hover:opacity-100 ">
@@ -86,11 +85,15 @@ export default function () {
             </Upload>
           </div>
         </div >
+        <div className="ml-4">
+          <div className="text-2xl">{user.nickname}</div>
+          <div className="mt-1 text-gray-500">{user.wallet}</div>
+        </div>
       </div >
       <div>
-        <Title title="Name"></Title>
+        <div className="mt-4 text-2xl">Full Name</div>
         <Input value={nickname} onChange={(e) => setNickname(e.target.value)} className="mt-4 px-4 py-2" />
-        <Button onClick={updateUserName} className="px-8 py-5 mt-4 font-bold" type="primary">Save</Button>
+        <Button onClick={updateUserName} className="px-8 py-5 mt-4 font-bold" type="dashed" loading={loading}>Save</Button>
       </div>
 
     </div >

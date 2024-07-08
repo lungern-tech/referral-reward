@@ -9,7 +9,7 @@ export default function ({ task, className }: { task: Task & { user: [User] }, c
       <div className="p-2 border border-gray-dark-500 rounded-lg relative">
         <Image className="rounded-lg" src={`/uploads/${task.cover_image}`} width={500} height={1} alt="cover_image"></Image>
         <div className="absolute bg-black rounded-full w-1/6 p-1 right-4 top-1/2">
-          <img className="rounded-full" src="https://www.loliapi.com/bg/" alt="" />
+          <Image className="rounded-full" src={`/uploads/${task.user[0].avatar}`} width={500} height={1} alt="avatar"></Image>
         </div>
         <div className="p-2">
           <div className="text-gray-400 font-bold">

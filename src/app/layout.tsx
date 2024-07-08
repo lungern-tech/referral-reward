@@ -30,9 +30,12 @@ export default async function RootLayout({
   const initialState = cookieToInitialState(config, headers().get('cookie'))
 
   const session = await auth()
-  const user = await client.collection<User>("user").findOne({
-    _id: new ObjectId(session.id)
-  })
+  let user = null
+  if (session) {
+    user = await client.collection<User>("user").findOne({
+      _id: new ObjectId(session.id)
+    })
+  }
 
   return (
     <html lang="en" className="h-full">

@@ -1,11 +1,14 @@
 "use client";
 
+import UserContext from "@/context/UserContext";
 import { Avatar } from "antd";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useContext } from "react";
 
 const UserCenter = () => {
 
+  const { user } = useContext(UserContext)
   const menus = [
     {
       key: '3',
@@ -28,7 +31,7 @@ const UserCenter = () => {
                 items-center justify-center whitespace-nowrap text-sm
                 font-medium rounded-sm px-3 bg-primary h-8 text-black"><span>Create New Campaign</span></Link>
               <Link href={'/account'}>
-                <Avatar src={'https://www.loliapi.com/bg/'} className="cursor-pointer" />
+                <Avatar src={`/uploads/${user.avatar}`} className="cursor-pointer" />
               </Link>
             </>
           ) : null

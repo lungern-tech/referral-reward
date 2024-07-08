@@ -3,6 +3,7 @@ import Reward from "@/components/card/Reward"
 import client from "@/lib/mongodb"
 import Interaction from "@/models/Interaction"
 import Task from "@/models/Task"
+import User from "@/models/User"
 import { ObjectId } from "mongodb"
 
 export default async function () {
@@ -21,8 +22,19 @@ export default async function () {
         foreignField: "_id",
         as: "task"
       }
-    }
-  ]).toArray() as Array<Interaction & { task: Array<Task> }>
+    },
+    { $unwind: "$task" },
+    {
+      $lookup: {
+        from: "user",
+        localField: "task.creator",
+        foreignField: "_id",
+        as: "user"
+      }
+    },
+    { $unwind: "$user" },
+
+  ]).toArray() as Array<Interaction & { task: Array<Task & { user: [User] }> }>
 
 
   return (
