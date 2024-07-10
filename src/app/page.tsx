@@ -20,9 +20,10 @@ export default async function Home() {
         as: "user"
       }
     },
-  ]).toArray() as Array<Task & { user: [User] }>
-
-  console.log(list)
+    {
+      $unwind: "$user"
+    }
+  ]).toArray() as Array<Task & { user: User }>
 
   return (
     <div>
@@ -31,7 +32,7 @@ export default async function Home() {
         {
           list.map((e, index) => {
             return (
-              <Reward className="mt-4 hover:shadow-sm hover:scale-110 transition" task={e} key={index} ></Reward>
+              <Reward className="mt-4 hover:shadow-sm hover:scale-110 transition" task={e} user={e.user} key={index} ></Reward>
             )
           })
         }

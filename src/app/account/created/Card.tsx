@@ -6,7 +6,7 @@ export default function ({ task, className }: { task: Task, className?: string }
   return (
     <Link className={className} href={`/account/created/${task._id}`}>
       <div className="p-2 border border-gray-dark-500 rounded-lg relative">
-        <Image className="rounded-lg" src={`/uploads/${task.cover_image}`} width={500} height={1} alt="cover_image"></Image>
+        <Image className="rounded-lg" src={`${task.cover_image}`} width={500} height={1} alt="cover_image"></Image>
         <div className="p-2">
           <div className="name font-extrabold text-ellipsis overflow-hidden whitespace-nowrap mb-2">
             {task.title}

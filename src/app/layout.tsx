@@ -39,7 +39,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className="h-full">
-      <body className="bg-black text-white dark custom-scrollbar h-full">
+      <body className="bg-black text-white-100 dark custom-scrollbar h-full">
         <UserProvider initialUser={user}>
           <WagmiProvider config={wagmiConfig}>
             <QueryClientProvider>
@@ -48,7 +48,7 @@ export default async function RootLayout({
                   <div className="flex min-h-full flex-col">
                     <Header />
                     <div className="flex min-h-full flex-1 flex-col justify-stretch dark">
-                      <div className="flex max-w-[1280px] mx-auto">
+                      <div className="flex max-w-[1280px]  xl:w-[1280px] mx-auto">
                         {children}
                       </div>
                     </div>

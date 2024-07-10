@@ -9,29 +9,18 @@ import { useContext } from "react";
 const UserCenter = () => {
 
   const { user } = useContext(UserContext)
-  const menus = [
-    {
-      key: '3',
-      label: (<Link href={'/account'}>User Center</Link>)
-    }
-  ]
-
-  const openModal = () => {
-
-  }
-
   const session = useSession();
   return (
     <>
       {
-        session.status === 'authenticated' ?
+        session.status === 'authenticated' && user ?
           (
             <>
               <Link href={'/create'} className="ml-auto inline-flex
                 items-center justify-center whitespace-nowrap text-sm
                 font-medium rounded-sm px-3 bg-primary h-8 text-black"><span>Create New Campaign</span></Link>
               <Link href={'/account'}>
-                <Avatar src={`/uploads/${user.avatar}`} className="cursor-pointer" />
+                <Avatar src={`${user.avatar}`} className="cursor-pointer" />
               </Link>
             </>
           ) : null

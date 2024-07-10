@@ -46,7 +46,7 @@ export async function POST(request) {
     const storagePath = path.join(process.cwd(), 'public', 'uploads');
     const savedFilename = await saveFile(file, name, storagePath);
 
-    return NextResponse.json({ filename: savedFilename });
+    return NextResponse.json({ filename: `/uploads/${savedFilename}` });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ message: 'Error uploading file' }, { status: 500 });

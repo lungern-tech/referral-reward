@@ -1,0 +1,29 @@
+.ql-editor {
+  min-height: 300px;
+
+  img {
+    display: inline-block;
+  }
+}
+
+.ql-snow {
+  font-size: 1.25rem !important;
+
+  &.ql-container,
+  &.ql-toolbar {
+    --tw-border-opacity: 1;
+    border-color: rgb(26 26 26 / var(--tw-border-opacity));
+
+  }
+
+  &.ql-toolbar {
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+  }
+
+  &.ql-container {
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+  }
+
+}

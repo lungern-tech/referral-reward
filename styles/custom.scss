@@ -44,3 +44,21 @@
 .bg-primary {
   background-color: hsl(var(--primary));
 }
+
+.text-white-100 {
+  color: rgb(231, 233, 234);
+}
+
+.text-dark-gray-400 {
+  color: #6f6f6f;
+}
+
+.text-dark-gray-600 {
+  color: rgb(170, 170, 170);
+}
+
+.rendered-html {
+  img {
+    display: inline-block;
+  }
+}

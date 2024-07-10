@@ -11,7 +11,7 @@ export default async function created() {
     creator: new ObjectId(session.id)
   }).toArray()
   return (
-    <div className="flex flex-wrap justify-around">
+    <div className="flex flex-wrap justify-around w-full">
       {
         list.map((e) => (
           <div className="w-1/3 p-2 pt-0" key={String(e._id)} >

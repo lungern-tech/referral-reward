@@ -17,4 +17,5 @@ export default interface Task {
   contract_address: string
   cover_image: string
   description: string
+  task: string
 }

@@ -24,7 +24,7 @@ export default async function ({ params }: { params: { id: string } }) {
           <StarOutlined />
         </div> */}
       </div>
-      <Image className='rounded-md mt-5' src={`/uploads/${task.cover_image}`} width="720" height="20" alt='cover_image'></Image>
+      <Image className='rounded-md mt-5' src={`${task.cover_image}`} width="720" height="20" alt='cover_image'></Image>
       <div className='mt-5'>
         <div className='' dangerouslySetInnerHTML={{ __html: task.description }}>
         </div>

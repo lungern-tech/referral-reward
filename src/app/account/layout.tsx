@@ -11,14 +11,14 @@ export default async function DashboardLayout({
 
 
   return (
-    <section className="grid grid-cols-5">
-      <div className="col-span-1 border-r h-full border-gray-dark-500 p-8 pl-0">
+    <>
+      <div className="w-[360px] border-r h-full border-gray-dark-500 p-8 pl-0">
         <Summary />
         <Nav />
       </div>
-      <div className="col-span-4 p-8">
+      <div className="p-8 flex-1 w-0">
         {children}
       </div>
-    </section>
+    </>
   )
 }

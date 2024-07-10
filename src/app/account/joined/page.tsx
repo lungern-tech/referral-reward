@@ -34,15 +34,16 @@ export default async function () {
     },
     { $unwind: "$user" },
 
-  ]).toArray() as Array<Interaction & { task: Array<Task & { user: [User] }> }>
+  ]).toArray() as Array<Interaction & { task: Task, user: User }>
 
+  console.log('list: ', list)
 
   return (
     <div className="flex flex-wrap justify-around">
       {
-        list.filter(e => e.task.length > 0).map((e) => (
+        list.map((e) => (
           <div className="w-1/3 p-2 pt-0" key={String(e._id)} >
-            <Reward task={e.task[0]} ></Reward>
+            <Reward task={e.task} user={e.user}></Reward>
           </div>
         ))
       }

@@ -1,0 +1,50 @@
+.ql-image-dialog {
+
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  color: black;
+  z-index: 10;
+  // border: 1px solid @editor-border;
+  background-color: #fff;
+  padding: 8px;
+  width: 280px;
+  font-size: 14px;
+
+  input.ql-image-upload {
+    display: none;
+  }
+
+  button.local-image {
+    width: 132px;
+    height: 28px;
+    background-color: powderblue;
+    // background-color: @primary-color;
+    border-radius: 4px;
+  }
+
+
+  .url-label {
+    margin: 12px 0 5px;
+    font-size: 12px;
+    // color: @comment-color;
+  }
+
+  .image-url-form {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+
+    input[type='text'] {
+      flex: 1;
+      padding: 6px;
+      border: 1px solid black;
+    }
+
+    span {
+      cursor: pointer;
+      margin-left: 10px;
+      // color: @primary-color;
+    }
+  }
+}

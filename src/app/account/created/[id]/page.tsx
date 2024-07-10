@@ -76,7 +76,7 @@ export default function ({ params: { id } }: { params: { id: string } }) {
           )
         }
         if (record.proof.image_link) {
-          return <Image src={`/uploads/proof/${record.proof.image_link}`} width={100} />
+          return <Image src={`${record.proof.image_link}`} width={100} />
         }
       },
     },
@@ -110,10 +110,6 @@ export default function ({ params: { id } }: { params: { id: string } }) {
 
   useEffect(() => {
     if (isSuccess) {
-      notification.success({
-        message: "Success",
-        description: "Reward sent successfully",
-      })
       handleSuccess()
       setPending(false)
       setRecord(null)
@@ -135,7 +131,7 @@ export default function ({ params: { id } }: { params: { id: string } }) {
       chainId: realChain.id,
     }, {
       onSuccess: async (data) => {
-        console.log(data)
+
       },
       onError(error, variables, context) {
         const errorName = (error.cause as { data: { errorName: string } }).data.errorName
@@ -151,6 +147,7 @@ export default function ({ params: { id } }: { params: { id: string } }) {
         id: record._id,
         task_id: record.task_id,
         transition_hash: hash,
+        status: InteractStatus.RewardSent
       })
     })
     notification.success({

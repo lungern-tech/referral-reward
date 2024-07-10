@@ -1,9 +1,10 @@
 "use client"
 
+import UserContext from "@/context/UserContext"
 import { Button, notification } from "antd"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import Upload from "../upload"
 
 export default function ({ taskId, status }: { taskId: string, status: boolean }) {
@@ -11,6 +12,8 @@ export default function ({ taskId, status }: { taskId: string, status: boolean }
   const [file, setFile] = useState("")
 
   const router = useRouter()
+
+  const { user } = useContext(UserContext)
 
   const join = async () => {
     if (!file) return
@@ -35,14 +38,14 @@ export default function ({ taskId, status }: { taskId: string, status: boolean }
   return (
     <>
       {
-        status ? (
-          <div className="w-full text-center px-4 py-2 border rounded-md mt-4">You have joined this Campaign</div>
+        user ? (status ? (
+          <div className="w-full text-center px-4 py-2 border rounded-md mt-4">Have Joined This Campaign</div>
         ) :
           (
             <>
               {
                 file ? (
-                  <Image className="rounded-md" src={`/uploads/proof/${file}`} width={1000} height={500} alt="proof">
+                  <Image className="rounded-md" src={`${file}`} width={1000} height={500} alt="proof">
                   </Image>
                 ) : (
                   <Upload proofChange={fileChange}></Upload>
@@ -50,8 +53,11 @@ export default function ({ taskId, status }: { taskId: string, status: boolean }
               }
               <Button className="mt-4 w-full" size="large" onClick={join}>Complete</Button>
             </>
-          )
+          )) : (
+          <div className="w-full text-center px-4 py-2 border rounded-md mt-4">Login To Join</div>
+        )
       }
+
     </>
   )
 }

@@ -96,7 +96,9 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       if (!user) {
         await client.collection<User>('user').insertOne({
           wallet: address,
-          create_time: new Date()
+          create_time: new Date(),
+          avatar: `/images/avatar/sample-${Math.ceil(Math.random() * 5)}.png`,
+          nickname: `user-${parseInt(String(Math.ceil(Math.random() * 10e4)), 16)}`
         })
         user = await client.collection<User>("user").findOne({
           wallet: address
@@ -104,7 +106,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       }
       session.id = user._id as string
       if (chainId && address) {
-        session.address = address as `0x${string}`
+        session.address = address as `0x${string} `
         session.chainId = parseInt(chainId, 10)
       }
       return session
