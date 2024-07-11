@@ -3,7 +3,9 @@
 import UserContext from "@/context/UserContext";
 import User from '@/models/User';
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from 'react';
+import { useAccount } from "wagmi";
 
 
 function ContextProvider({
@@ -19,6 +21,21 @@ function ContextProvider({
   }
 
   const { update, data } = useSession()
+
+  const { address } = useAccount()
+
+  const router = useRouter()
+
+  const [localAddress, setLocalAddress] = useState<string>()
+
+  useEffect(() => {
+    console.log(address, localAddress)
+    if (localAddress !== address && !!localAddress) {
+      router.push("/")
+    }
+    setLocalAddress(address)
+
+  }, [address])
 
   useEffect(() => {
     setUser(data?.userInfo)

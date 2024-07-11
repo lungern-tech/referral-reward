@@ -29,7 +29,7 @@ export async function PUT(request) {
     _id: new ObjectId(id as string),
   }, {
     $set: {
-      transition_hash: formData.get('transition_hash'),
+      transition_hash: formData.transition_hash,
       status: InteractStatus.RewardSent
     }
   })

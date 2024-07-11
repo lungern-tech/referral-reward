@@ -24,7 +24,9 @@ export default function () {
   const { user, updateUser } = useContext(UserContext)
 
   useEffect(() => {
-    setNickname(user.nickname)
+    if (user) {
+      setNickname(user.nickname)
+    }
   }, [user])
 
   const updateUserName = () => {
@@ -66,7 +68,14 @@ export default function () {
     <div className="px-16 py-8">
       <div className="flex items-center">
         <div className="relative">
-          <Image className="size-[100px] rounded-full" src={`${user?.avatar}`} width={56} height={56} alt="avatar"></Image>
+          {
+            user ? (
+              <Image className="size-[100px] rounded-full" src={`${user.avatar}`} width={56} height={56} alt="avatar"></Image>
+            ) : (
+              <>
+              </>
+            )
+          }
           <div className="absolute left-0 top-0 z-10 bg-gray-700/70 size-[100px] rounded-full overflow-hidden opacity-0 hover:opacity-100 ">
             <div className="flex flex-col h-full w-full items-center justify-center">
               {loading ? <LoadingOutlined /> : <PlusOutlined />}
@@ -85,10 +94,17 @@ export default function () {
             </Upload>
           </div>
         </div >
-        <div className="ml-4">
-          <div className="text-2xl">{user.nickname}</div>
-          <div className="mt-1 text-gray-500">{user.wallet}</div>
-        </div>
+        {
+          user ? (
+            <div className="ml-4">
+              <div className="text-2xl">{user.nickname}</div>
+              <div className="mt-1 text-gray-500">{user.wallet}</div>
+            </div>
+          ) : (
+            <></>
+          )
+        }
+
       </div >
       <div>
         <div className="mt-4 text-2xl">Full Name</div>

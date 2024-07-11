@@ -5,7 +5,7 @@ import Task from "@/models/Task";
 import User from "@/models/User";
 import ChainMap from '@/utils/ChainMap';
 import { CheckCircleFilled, CloseCircleOutlined } from '@ant-design/icons';
-import { Card, Empty, notification } from "antd";
+import { Button, Card, Empty, notification } from "antd";
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useEffect, useState } from "react";
@@ -84,6 +84,14 @@ export default function ({ params: { id } }: { params: { id: string } }) {
     }, {
       onSuccess: async (data) => {
         console.log('transition hash: ', data)
+        notification.success({
+          message: "Success",
+          description: (
+            <div>
+              Reward is sending. Check <a target='_blank' href={`${realChain.blockExplorers.default.url}/tx/${hash}`}>{hash}</a> for more information
+            </div>
+          )
+        })
       },
       onError(error, variables, context) {
         const errorName = (error.cause as { data: { errorName: string } }).data.errorName
@@ -93,6 +101,7 @@ export default function ({ params: { id } }: { params: { id: string } }) {
   }
 
   const handleSuccess = () => {
+    const realChain = ChainMap[task.chain]
     fetch(`/api/interact`, {
       method: "PUT",
       body: JSON.stringify({
@@ -103,7 +112,11 @@ export default function ({ params: { id } }: { params: { id: string } }) {
     })
     notification.success({
       message: "Success",
-      description: "Reward sent successfully",
+      description: (
+        <div>
+          Reward has been sent. Check <a target='_blank' href={`${realChain.blockExplorers.default.url}/tx/${hash}`}>{hash}</a> for more information
+        </div>
+      )
     })
   }
 
@@ -150,10 +163,9 @@ export default function ({ params: { id } }: { params: { id: string } }) {
                 <>
                   <div className='flex'>
                     {
-
                       joinedList.map((item) => (
                         <div className='w-1/3  p-4' key={String(item._id)}>
-                          <Card className='relative' actions={[<CheckCircleFilled onClick={() => sendReward(item)} className='text-green-400' />, <CloseCircleOutlined />]}>
+                          <Card className='relative' actions={[<Button loading={loading} onClick={() => sendReward(item)} className='text-green-400'  ><CheckCircleFilled />Send</Button>, <CloseCircleOutlined />]}>
                             <div className='absolute left-0 top-0'>
                               {item.status}
                             </div>
