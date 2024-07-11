@@ -39,17 +39,21 @@ export default async function ({ params }: { params: { id: string } }) {
     }
   ]).toArray()
   return (
-    <div className="grid grid-cols-5 mt-8">
-      <div className="col-span-3 pr-12 pb-8 border-r border-gray-dark-500" >
+    <div className="grid grid-cols-5">
+      <div className="col-span-3 pr-12 pb-8 border-r border-gray-dark-500 pt-8" >
         <Image className="rounded-md border-gray-dark-500 border" width={1000} height={700} alt="cover_image" src={`${task.cover_image}`}></Image>
         <div className="text-3xl font-bold mt-8">
           {task.title}
         </div>
         <div className="flex mt-4 mb-8">
           <div className="text-green-500 bg-white px-4 py-1 rounded-md mr-2 font-semibold">Ongoing</div>
-          <div className="text-black bg-white px-4 py-1 rounded-md mr-2 font-semibold">(UTC+8) {new Date(task.start_time).toLocaleString()} ～
+          <div className="text-black bg-white px-4 py-1 rounded-md mr-2 font-semibold">(UTC+8)
             {
-              new Date(task.end_time).toLocaleDateString()
+              format(new Date(task.start_time), "YYYY-MM-DD hh:mm")
+            }
+            ～
+            {
+              format(new Date(task.end_time), "YYYY-MM-DD hh:mm")
             }
           </div>
         </div>

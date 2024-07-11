@@ -1,15 +1,16 @@
 import Reward from "@/components/card/Reward";
 import HorizontalScroll from "@/components/horizontal-scroll";
 import client from "@/lib/mongodb";
-import Task from "@/models/Task";
+import Task, { TaskStatus } from "@/models/Task";
 import User from "@/models/User";
+import { Empty } from "antd";
 
 export default async function Home() {
 
   const list = await client.collection<Task>("task").aggregate([
     {
       $match: {
-        status: "created"
+        status: TaskStatus.Deployed
       }
     },
     {
@@ -24,19 +25,26 @@ export default async function Home() {
       $unwind: "$user"
     }
   ]).toArray() as Array<Task & { user: User }>
-
   return (
-    <div>
+    <div className="w-full">
       <div className="mt-8 font-bold text-2xl">Referral Campaign</div>
-      <HorizontalScroll>
-        {
-          list.map((e, index) => {
-            return (
-              <Reward className="mt-4 hover:shadow-sm hover:scale-110 transition" task={e} user={e.user} key={index} ></Reward>
-            )
-          })
-        }
-      </HorizontalScroll>
+      {
+        list.length > 0 ? (
+          <>
+            <HorizontalScroll>
+              {
+                list.map((e, index) => {
+                  return (
+                    <Reward className="mt-4 hover:shadow-sm hover:scale-110 transition" task={e} user={e.user} key={index} ></Reward>
+                  )
+                }
+                )
+              }
+            </HorizontalScroll>
+          </>
+        ) :
+          <Empty className="mx-auto mt-16 h-40" />
+      }
     </div>
   );
 }

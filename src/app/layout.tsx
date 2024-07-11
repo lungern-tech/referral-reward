@@ -40,11 +40,11 @@ export default async function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body className="bg-black text-white-100 dark custom-scrollbar h-full">
-        <UserProvider initialUser={user}>
-          <WagmiProvider config={wagmiConfig}>
-            <QueryClientProvider>
-              <ContextProvider initialState={initialState}>
-                <SessionProvider>
+        <WagmiProvider config={wagmiConfig}>
+          <QueryClientProvider>
+            <ContextProvider initialState={initialState}>
+              <SessionProvider>
+                <UserProvider initialUser={user}>
                   <div className="flex min-h-full flex-col">
                     <Header />
                     <div className="flex min-h-full flex-1 flex-col justify-stretch dark">
@@ -54,11 +54,11 @@ export default async function RootLayout({
                     </div>
                     <Footer />
                   </div>
-                </SessionProvider>
-              </ContextProvider>
-            </QueryClientProvider>
-          </WagmiProvider>
-        </UserProvider>
+                </UserProvider>
+              </SessionProvider>
+            </ContextProvider>
+          </QueryClientProvider>
+        </WagmiProvider>
       </body>
     </html>
   )

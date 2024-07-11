@@ -16,7 +16,13 @@ export default function ({ taskId, status }: { taskId: string, status: boolean }
   const { user } = useContext(UserContext)
 
   const join = async () => {
-    if (!file) return
+    if (!file) {
+      notification.error({
+        message: "Error",
+        description: "Please upload proof first"
+      })
+      return
+    }
     let formData = new FormData()
     formData.append('taskId', taskId)
     formData.append('proof', file)

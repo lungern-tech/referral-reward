@@ -4,7 +4,7 @@ import Task from "@/models/Task";
 import ChainMap from "@/utils/ChainMap";
 import { firstOfDay } from "@/utils/DateFormat";
 import { InboxOutlined } from "@ant-design/icons";
-import { Button, DatePicker, Input, Select, Upload } from "antd";
+import { Button, DatePicker, Input, Select, Upload, notification } from "antd";
 import { UploadChangeParam } from "antd/es/upload";
 import dayjs from "dayjs";
 import Image from "next/image";
@@ -60,6 +60,12 @@ export default function create() {
 
 
   const createNewReward = () => {
+    if (Object.values(taskInfo).some(e => !e)) {
+      notification.error({
+        message: 'Please complete all required fields'
+      })
+      return
+    }
     fetch('/api/task/create', {
       method: 'POST',
       body: JSON.stringify(taskInfo)

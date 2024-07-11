@@ -26,6 +26,9 @@ export async function POST(request: Request) {
       }
     },
     {
+      $unwind: "$user"
+    },
+    {
       $facet: {
         results: [
           { $skip: (pageNumber - 1) * pageSize },

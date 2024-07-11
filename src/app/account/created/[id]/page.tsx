@@ -1,16 +1,17 @@
 "use client"
 import { abi } from '@/abi/Reward.sol/Reward.json';
-import Interaction, { InteractStatus } from "@/models/Interaction";
+import Interaction from "@/models/Interaction";
 import Task from "@/models/Task";
 import User from "@/models/User";
 import ChainMap from '@/utils/ChainMap';
-import { Button, Image, Table, notification } from "antd";
-import { ColumnsType } from "antd/es/table";
+import { CheckCircleFilled, CloseCircleOutlined } from '@ant-design/icons';
+import { Card, Empty, notification } from "antd";
 import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 import { useEffect, useState } from "react";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 
-type IJoinItem = Interaction & { user: [User] }
+type IJoinItem = Interaction & { user: User }
 
 export default function ({ params: { id } }: { params: { id: string } }) {
 
@@ -22,6 +23,7 @@ export default function ({ params: { id } }: { params: { id: string } }) {
   const [page_number] = useState(1)
   const [joinedList, setJoinedList] = useState<IJoinItem[]>([])
   const [totalCount, setTotalCount] = useState(0)
+  const [loading, setLoading] = useState(false)
 
   const [pending, setPending] = useState(false)
   const [record, setRecord] = useState<Interaction>(null)
@@ -34,7 +36,9 @@ export default function ({ params: { id } }: { params: { id: string } }) {
 
   useEffect(() => {
     if (!task) return
-    console.log(task)
+    if (joinedList.length === 0) {
+      setLoading(true)
+    }
     let formData = new FormData()
     formData.append("task_id", String(task._id))
     formData.append("page_number", page_number.toString())
@@ -43,64 +47,12 @@ export default function ({ params: { id } }: { params: { id: string } }) {
       method: "POST",
       body: formData
     }).then(res => res.json()).then((data: [{ results: Array<IJoinItem>, totalCount: [{ total: number }] }]) => {
-      setJoinedList(data[0].results)
+      setJoinedList(data[0].results || [])
       setTotalCount(data[0].totalCount[0].total)
+      setLoading(false)
     })
   }, [task])
 
-
-  const columns: ColumnsType<IJoinItem> = [
-    {
-      title: 'Wallet Address',
-      dataIndex: 'wallet',
-      key: 'wallet',
-      render(value, record, index) {
-        return (
-          record.user[0].wallet
-        )
-      },
-    },
-    {
-      title: 'Join Time',
-      dataIndex: 'created_at',
-      key: 'created_at',
-    },
-    {
-      title: 'Proof',
-      dataIndex: 'proof',
-      key: 'proof',
-      render(value, record, index) {
-        if (record.proof.text) {
-          return (
-            record.proof.text
-          )
-        }
-        if (record.proof.image_link) {
-          return <Image src={`${record.proof.image_link}`} width={100} />
-        }
-      },
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-    },
-    {
-      title: 'Action',
-      dataIndex: 'action',
-      key: 'action',
-      render: (value, current, index) => {
-        if (current.status === InteractStatus.Joined) {
-          return (
-            <div className='flex'>
-              <Button className='mr-2' type='primary' disabled={pending} loading={current._id === record?._id && pending} onClick={() => sendReward(current)}>Approve</Button>
-              <Button >Reject</Button>
-            </div>
-          )
-        }
-      }
-    }
-  ]
 
   const { data: hash, writeContract } = useWriteContract()
   const { isSuccess, isError, } = useWaitForTransactionReceipt({
@@ -116,11 +68,11 @@ export default function ({ params: { id } }: { params: { id: string } }) {
     }
   }, [isSuccess])
 
-  const sendReward = (record: Interaction & { user: [User] }) => {
+  const sendReward = (record: IJoinItem) => {
     const realChain = ChainMap[task.chain]
     setPending(true)
     setRecord(record)
-    const address = record.user[0].wallet
+    const address = record.user.wallet
     writeContract({
       abi,
       address: task.contract_address as `0x${string}`,
@@ -131,7 +83,7 @@ export default function ({ params: { id } }: { params: { id: string } }) {
       chainId: realChain.id,
     }, {
       onSuccess: async (data) => {
-
+        console.log('transition hash: ', data)
       },
       onError(error, variables, context) {
         const errorName = (error.cause as { data: { errorName: string } }).data.errorName
@@ -147,7 +99,6 @@ export default function ({ params: { id } }: { params: { id: string } }) {
         id: record._id,
         task_id: record.task_id,
         transition_hash: hash,
-        status: InteractStatus.RewardSent
       })
     })
     notification.success({
@@ -168,8 +119,56 @@ export default function ({ params: { id } }: { params: { id: string } }) {
   }
 
   return (
-    <div>
-      <Table rowKey={"_id"} columns={columns} dataSource={joinedList}></Table>
-    </div>
+    <>
+      {
+        task ? (
+          <div >
+            <div className=''>Contract Info</div>
+            <div className='flex'>
+              <div className=''>Chain: </div>
+              <div className=''>{task.chain}</div>
+            </div>
+            <div className='flex'>
+              <div className=''>Address: </div>
+              <a href="">{task.contract_address}</a>
+            </div>
+            <div className='flex'>
+              <div className=''>Deploy Hash: </div>
+              <div >{task.deploy_hash}</div>
+            </div>
+          </div >
+        )
+          : null
+      }
+      {
+        loading ? (
+          <></>
+        ) : (
+          <>
+            {
+              joinedList.length > 0 ? (
+                <>
+                  <div className='flex'>
+                    {
+
+                      joinedList.map((item) => (
+                        <div className='w-1/3  p-4' key={String(item._id)}>
+                          <Card className='relative' actions={[<CheckCircleFilled onClick={() => sendReward(item)} className='text-green-400' />, <CloseCircleOutlined />]}>
+                            <div className='absolute left-0 top-0'>
+                              {item.status}
+                            </div>
+                            <Image src={item.proof.image_link} width={300} height={100} alt='proof'></Image>
+                          </Card>
+                        </div>
+                      ))
+                    }
+                  </div>
+                </>
+              ) : <Empty description={"No More User"} />
+            }
+          </>
+        )
+      }
+    </>
   )
 }

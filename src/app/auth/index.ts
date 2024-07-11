@@ -17,6 +17,7 @@ declare module 'next-auth' {
     address: `0x${string}`
     chainId: number
     id: string
+    userInfo: User
   }
 }
 
@@ -86,6 +87,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     //   return token
     // },
     async session({ session, token }) {
+      console.log('session: ', token)
       if (!token.sub) {
         return session
       }
@@ -105,6 +107,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         })
       }
       session.id = user._id as string
+      session.userInfo = user
       if (chainId && address) {
         session.address = address as `0x${string} `
         session.chainId = parseInt(chainId, 10)

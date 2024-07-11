@@ -1,12 +1,12 @@
 'use client'
 
 import { projectId } from '@/config'
-import { createWeb3Modal, } from '@web3modal/wagmi/react'
-import React, { type ReactNode } from 'react'
-import { type State, } from 'wagmi'
 import { siweConfig } from '@/config/siwe'
-import { getWagmiConfig } from '@/utils/WagmiConstants'
 import { ConstantsUtil } from '@/utils/ConstantsUtil'
+import { getWagmiConfig } from '@/utils/WagmiConstants'
+import { createWeb3Modal, } from '@web3modal/wagmi/react'
+import { type ReactNode } from 'react'
+import { type State } from 'wagmi'
 
 
 if (!projectId) {
@@ -30,6 +30,7 @@ function ContextProvider({
   children: ReactNode
   initialState: State | undefined
 }) {
+
   return (
     <>
       {children}

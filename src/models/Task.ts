@@ -1,5 +1,11 @@
 import { ObjectId } from "mongodb"
 
+
+export enum TaskStatus {
+  Created = "created",
+  Deployed = "deployed",
+}
+
 export default interface Task {
   _id?: ObjectId | string
   creator: string | ObjectId

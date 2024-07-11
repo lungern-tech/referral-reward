@@ -2,6 +2,7 @@ import { auth } from "@/app/auth"
 import client from "@/lib/mongodb"
 import Task from "@/models/Task"
 import { ObjectId } from "mongodb"
+import { NextResponse } from "next/server"
 export async function POST(request: Request) {
   const session = await auth()
   let body = await request.json() as { deploy_hash?: string, task_id: string, contract_address?: string }
@@ -27,7 +28,5 @@ export async function POST(request: Request) {
       ...updateParams
     }
   })
-  return new Response("Update successfully", {
-    status: 200
-  })
+  return NextResponse.json({ message: "Update Successfully" })
 }

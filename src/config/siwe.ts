@@ -1,6 +1,7 @@
-import { getCsrfToken, signIn, signOut, getSession } from 'next-auth/react'
-import type { SIWEVerifyMessageArgs, SIWECreateMessageArgs, SIWESession } from '@web3modal/siwe'
+import type { SIWECreateMessageArgs, SIWEVerifyMessageArgs } from '@web3modal/siwe'
 import { createSIWEConfig, formatMessage } from '@web3modal/siwe'
+import { Session } from 'next-auth'
+import { getCsrfToken, getSession, signIn, signOut } from 'next-auth/react'
 import { WagmiConstantsUtil } from '../utils/WagmiConstants'
 
 export const siweConfig = createSIWEConfig({
@@ -30,9 +31,9 @@ export const siweConfig = createSIWEConfig({
       throw new Error('Failed to get session!')
     }
 
-    const { address, chainId } = session as unknown as SIWESession
+    const { address, chainId, userInfo } = session as Session
 
-    return { address, chainId }
+    return { address, chainId, userInfo }
   },
   verifyMessage: async ({ message, signature, cacao }: SIWEVerifyMessageArgs) => {
     try {
