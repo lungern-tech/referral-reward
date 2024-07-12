@@ -1,12 +1,11 @@
-import { NextResponse, type NextRequest } from 'next/server'
-import mongoClient from "@/lib/mongodb"
-import { ObjectId } from "mongodb"
 import { auth } from '@/app/auth';
-import User from '@/models/User'
+import mongoClient from "@/lib/mongodb";
+import User from '@/models/User';
+import { ObjectId } from "mongodb";
+import { NextResponse, type NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest, response: NextResponse) {
   const user = await auth()
-  console.log('user', user)
   if (!user) {
     return NextResponse.json({
       error: 'User not found'
@@ -34,7 +33,6 @@ export async function POST(request: NextRequest, response: NextResponse) {
     })
   }
   const body = await (request.json() as Promise<Partial<User>>)
-  console.log('body: ', body)
   const { _id, ...updateInfo } = body
   const userInfo = await mongoClient.collection<User>('user').updateOne({ _id: new ObjectId(body._id) }, {
     $set: {

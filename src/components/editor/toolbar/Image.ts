@@ -50,8 +50,8 @@ class ImageHandler extends Module {
       this.imageDialog = document.createElement('div');
       this.imageDialog.classList.add('ql-image-dialog', 'ql-toolbar-dialog');
       const words = ['Select Local Image', 'Input Image URL', 'Insert']
-      this.imageDialog.innerHTML = `
-      <input type="file" class="ql-image-upload" accept="${this.options.imageAccept || 'image/png, image/gif, image/jpeg, image/bmp, image/x-icon'
+      //@ts-ignore
+      this.imageDialog.innerHTML = `<input type="file" class="ql-image-upload" accept="${this.options.imageAccept || 'image/png, image/gif, image/jpeg, image/bmp, image/x-icon'
         }" />
       <button class="local-image">${words[0]}</button>
       <p class="err-tips err-file"></p>
@@ -136,8 +136,10 @@ class ImageHandler extends Module {
         this.showImageDialog();
         return;
       }
+      // @ts-ignore
       const isLt5M = file.size / 1024 / 1024 < (this.options.maxSize || 5);
       if (!isLt5M) {
+        // @ts-ignore
         tips.innerText = words[1].replace('$', this.options.maxSize || 5);
         this.showImageDialog();
         return;

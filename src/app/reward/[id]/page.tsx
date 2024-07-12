@@ -4,6 +4,7 @@ import Title from "@/components/title";
 import client from "@/lib/mongodb";
 import Interaction, { InteractStatus } from "@/models/Interaction";
 import Task from "@/models/Task";
+import User from "@/models/User";
 import { format } from "@/utils/DateFormat";
 import { CalendarOutlined } from "@ant-design/icons";
 import { ObjectId } from "mongodb";
@@ -14,9 +15,9 @@ export default async function ({ params }: { params: { id: string } }) {
 
   const task = await client.collection<Task>("task").findOne({ _id: new ObjectId(params.id) })
   const session = await auth()
-  let joinStatus
+  let interaction
   if (session) {
-    joinStatus = await client.collection<Interaction>("interaction").findOne({ task_id: new ObjectId(params.id), user_id: new ObjectId(session.id) })
+    interaction = await client.collection<Interaction>("interaction").findOne({ task_id: new ObjectId(params.id), user_id: new ObjectId(session.id) })
   }
   const joinCount = await client.collection<Interaction>("interaction").countDocuments({
     task_id: new ObjectId(params.id)
@@ -30,6 +31,17 @@ export default async function ({ params }: { params: { id: string } }) {
       }
     },
     {
+      $lookup: {
+        from: "user",
+        localField: "user_id",
+        foreignField: "_id",
+        as: "user"
+      }
+    },
+    {
+      $unwind: "$user"
+    },
+    {
       $sort: {
         created_at: -1
       }
@@ -37,7 +49,7 @@ export default async function ({ params }: { params: { id: string } }) {
     {
       $limit: 20
     }
-  ]).toArray()
+  ]).toArray() as Array<Interaction & { user: User }>
   return (
     <div className="grid grid-cols-5">
       <div className="col-span-3 pr-12 pb-8 border-r border-gray-dark-500 pt-8" >
@@ -64,7 +76,7 @@ export default async function ({ params }: { params: { id: string } }) {
         </div>
         <div className="">
           <div className="mt-4" >
-            <Proof status={joinStatus?.status === InteractStatus.Joined} taskId={String(task._id)}></Proof>
+            <Proof interaction={interaction} task={task}></Proof>
           </div >
         </div>
         <div className="mt-8 font-bold text-2xl pt-8 border-t border-gray-dark-500">Guide</div>
@@ -104,8 +116,14 @@ export default async function ({ params }: { params: { id: string } }) {
           <div className="ml-auto">{joinCount}</div>
         </div>
         <div className="flex mt-4 font-bold text-xl">
-          Verified
-          {topWinners.length}
+          Latest Verified
+        </div>
+        <div className="flex gap-2 mt-4">
+          {
+            topWinners.map(item => (
+              <Image key={String(item._id)} src={item.user.avatar} width={40} height={40} alt={item.user.name} />
+            ))
+          }
         </div>
       </div>
     </div >

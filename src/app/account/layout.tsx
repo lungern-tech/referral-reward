@@ -12,11 +12,11 @@ export default async function DashboardLayout({
 
   return (
     <>
-      <div className="w-[360px] border-r h-full border-gray-dark-500 p-8 pl-0">
+      <div className="hidden lg:block lg:w-[360px] border-r h-full border-gray-dark-500 p-8 pl-0">
         <Summary />
         <Nav />
       </div>
-      <div className="p-8 flex-1 w-0">
+      <div className="p-8 flex-1 w-1">
         {children}
       </div>
     </>

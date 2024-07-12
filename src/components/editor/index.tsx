@@ -74,7 +74,6 @@ const Editor = forwardRef<Quill, Props>(
           toolbar: toolbarOptions,
           imageUploader: {
             upload: (file) => {
-              console.log(file)
               return upload(file, file.name).then(res => {
                 return res.filename
               })

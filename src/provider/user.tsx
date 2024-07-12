@@ -29,7 +29,6 @@ function ContextProvider({
   const [localAddress, setLocalAddress] = useState<string>()
 
   useEffect(() => {
-    console.log(address, localAddress)
     if (localAddress !== address && !!localAddress) {
       router.push("/")
     }

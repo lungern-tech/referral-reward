@@ -6,7 +6,6 @@ import { NextResponse } from "next/server";
 
 export async function POST(request) {
   const session = await auth()
-  console.log('session: ', session)
   const formData = await request.formData();
   const file = formData.get('proof');
   const taskId = formData.get('taskId');

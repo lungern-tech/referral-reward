@@ -87,7 +87,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     //   return token
     // },
     async session({ session, token }) {
-      console.log('session: ', token)
       if (!token.sub) {
         return session
       }

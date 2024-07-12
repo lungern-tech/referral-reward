@@ -8,7 +8,6 @@ import Card from "./Card"
 export default async function created() {
 
   const session = await auth()
-  console.log(session.id)
   const list = await client.collection<Task>("task").find({
     creator: new ObjectId(session.id)
   }).toArray()

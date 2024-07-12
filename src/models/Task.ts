@@ -4,6 +4,8 @@ import { ObjectId } from "mongodb"
 export enum TaskStatus {
   Created = "created",
   Deployed = "deployed",
+  Deploying = "deploying",
+  Failed = "failed"
 }
 
 export default interface Task {
@@ -13,7 +15,7 @@ export default interface Task {
   chain: number
   start_time: Date
   end_time: Date
-  duration: number
+  duration: string
   reward: number
   reward_count: number
   status: "created" | "active" | "inactive" | "end"

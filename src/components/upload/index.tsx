@@ -10,7 +10,6 @@ export default function (
 ) {
 
   const uploadCoverImage = async (info: UploadChangeParam) => {
-    console.log(info.file)
     let formData = new FormData()
     formData.append('file', info.file as unknown as File)
     formData.append('name', info.file.name)

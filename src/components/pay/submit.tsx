@@ -1,25 +1,23 @@
-"use client"
+'use client'
 import { abi } from '@/abi/RewardFactory.sol/RewardFactory.json'
 import UserContext from '@/context/UserContext'
 import { TaskStatus } from '@/models/Task'
 import ChainMap from '@/utils/ChainMap'
-import { Button, Modal, notification } from "antd"
+import { Button, Modal, notification } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useContext, useEffect } from 'react'
-import { decodeEventLog, parseEther } from "viem"
+import { decodeEventLog, parseEther } from 'viem'
 
-import { useWaitForTransactionReceipt, useWriteContract, } from 'wagmi'
+import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 
 export default function ({ children, reward, reward_count, chain, start, end, task_id, className }: { reward: number, reward_count: number, chain: number, start: number, end: number, children: React.ReactNode, task_id: string, className: string }) {
-
-
   const { user } = useContext(UserContext)
 
   const router = useRouter()
 
   const { data: hash, writeContract } = useWriteContract()
   const { isLoading, isSuccess, data } = useWaitForTransactionReceipt({
-    hash,
+    hash
   })
 
   const realChain = ChainMap[chain]
@@ -37,23 +35,34 @@ export default function ({ children, reward, reward_count, chain, start, end, ta
       value: parseEther('0.01')
     }, {
       onSuccess: async (data) => {
-        notification.success({
-          message: 'Success',
-          description: (
-            <div>
-              Contract create transition has started. Check <a target='_blank' href={`${realChain.blockExplorers.default.url}/tx/${data}`}>{data}</a> for more information
-            </div>
-          ),
-          duration: 10,
-          showProgress: true,
-          pauseOnHover: true
+        fetch('/api/task/update', {
+          method: 'POST',
+          body: JSON.stringify({
+            deploy_hash: hash,
+            task_id,
+            status: TaskStatus.Deploying
+          })
+        }).then(res => res.json()).then(() => {
+          console.log('data: ', data)
+          notification.success({
+            message: 'Success',
+            description: (
+              <div>
+                Contract create transition has started. Check <a target='_blank'
+                  href={`${realChain.blockExplorers.default.url}/tx/${data}`}
+                  rel="noreferrer">{data}</a> for more information
+              </div>
+            ),
+            duration: 10,
+            showProgress: true,
+            pauseOnHover: true
+          })
         })
-        console.log('success: ', data)
       },
       onError(error, variables, context) {
         console.log('error: ', error, variables, context)
-      },
-    },)
+      }
+    })
   }
 
   useEffect(() => {
@@ -63,24 +72,26 @@ export default function ({ children, reward, reward_count, chain, start, end, ta
           const decodedLog = decodeEventLog({
             abi,
             data: log.data,
-            topics: log.topics,
+            topics: log.topics
           })
           if (decodedLog.eventName === 'CreateRewardSuccess') {
-            let contractAddress = (decodedLog.args as unknown as { contractAddress: string }).contractAddress
-            fetch(`/api/task/update`, {
-              method: "POST",
+            const contractAddress = (decodedLog.args as unknown as { contractAddress: string }).contractAddress
+            fetch('/api/task/update', {
+              method: 'POST',
               body: JSON.stringify({
                 contract_address: contractAddress,
                 deploy_hash: hash,
                 task_id,
                 status: TaskStatus.Deployed
               })
-            }).then(res => res.json()).then(data => {
+            }).then(async res => await res.json()).then(() => {
               Modal.success({
-                title: "Contract Deployed Successfully",
+                title: 'Contract Deployed Successfully',
                 content: (
                   <div>
-                    Contract has been deployed successfully.  You can check <a target='_blank' href={`${realChain.blockExplorers.default.url}/tx/${data}`}>{data}</a> for more information
+                    Contract has been deployed successfully.  You can check <a target='_blank'
+                      href={`${realChain.blockExplorers.default.url}/address/${contractAddress}`}
+                      rel="noreferrer">{contractAddress}</a> for more information
                   </div>
                 ),
                 onOk: () => {
@@ -89,8 +100,7 @@ export default function ({ children, reward, reward_count, chain, start, end, ta
                 onCancel: () => {
                   router.refresh()
                 }
-              },
-
+              }
               )
             })
           }
@@ -98,15 +108,16 @@ export default function ({ children, reward, reward_count, chain, start, end, ta
           console.error('Failed to decode log:', error)
         }
       })
-
     }
   }, [isSuccess])
 
   return (
     <>
-      <Button className={className} loading={isLoading} onClick={createReward}>{
-        children
-      }</Button>
+      <Button className={className}
+        loading={isLoading}
+        onClick={createReward}>{
+          children
+        }</Button>
     </>
   )
 }
