@@ -3,13 +3,15 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "start": "next start"
+    "start": "next start",
+    "version": "next --version"
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.7",
     "@ant-design/web3": "^1.15.1",
     "@ant-design/web3-wagmi": "^2.7.0",
-    "@aws-sdk/client-s3": "^3.606.0",
+    "@aws-sdk/client-s3": "^3.614.0",
+    "@aws-sdk/lib-storage": "^3.614.0",
     "@aws-sdk/s3-request-presigner": "^3.606.0",
     "@tanstack/react-query": "^5.48.0",
     "@walletconnect/web3wallet": "^1.12.3",
@@ -58,5 +60,6 @@
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.4",
     "typescript": "*"
-  }
+  },
+  "version": "0.0.0"
 }
