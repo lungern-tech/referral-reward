@@ -18,7 +18,7 @@ interface Props {
   readOnly?: boolean
   defaultValue?: Delta
   options?: Partial<QuillOptions>
-  onTextChange?: (delta: Delta, oldDelta: Delta, source: string) => void
+  onTextChange?: (latest: string) => void
   onSelectionChange?: (
     range: Range,
     oldRange: Range,
@@ -52,18 +52,22 @@ const Editor = forwardRef<Quill, Props>(
     const defaultValueRef = useRef(defaultValue);
     const onTextChangeRef = useRef(onTextChange);
     const onSelectionChangeRef = useRef(onSelectionChange);
+    const localRef = useRef<Quill>();
 
     useLayoutEffect(() => {
-      onTextChangeRef.current = onTextChange;
+      onTextChangeRef.current = () => {
+        let latest = localRef.current.getSemanticHTML()
+        onTextChange(latest)
+      };
       onSelectionChangeRef.current = onSelectionChange;
     });
 
     useEffect(() => {
-      // @ts-ignore
-      ref.current?.enable(!readOnly);
-    }, [ref, readOnly]);
+      localRef?.current?.enable(!readOnly)
+    }, [localRef, readOnly]);
 
     useEffect(() => {
+
       const container = containerRef.current;
       const editorContainer = container.appendChild(
         container.ownerDocument.createElement('div'),
@@ -85,10 +89,7 @@ const Editor = forwardRef<Quill, Props>(
         },
         ...options,
       });
-
-      // @ts-ignore
-      ref.current = quill;
-
+      localRef.current = quill;
       if (defaultValueRef.current) {
         quill.setContents(defaultValueRef.current);
       }
@@ -102,11 +103,10 @@ const Editor = forwardRef<Quill, Props>(
       });
 
       return () => {
-        // @ts-ignore
-        ref.current = null;
         container.innerHTML = '';
       };
-    }, [ref]);
+      // }
+    }, []);
 
     return <div ref={containerRef}></div>;
   },

@@ -6,12 +6,17 @@ import { InboxOutlined } from "@ant-design/icons";
 import { Button, DatePicker, Input, Select, Upload, notification } from "antd";
 import { UploadChangeParam } from "antd/es/upload";
 import dayjs from "dayjs";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
-import Quill, { QuillOptions } from "quill";
-import { useEffect, useRef, useState } from "react";
+import { QuillOptions } from "quill";
+import Delta from "quill-delta";
+import { useEffect, useState } from "react";
 import "./index.scss";
 
+const Editor = dynamic(() => import("@/components/editor"), {
+  ssr: false
+})
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -24,10 +29,6 @@ const editorConfig: Partial<QuillOptions> = {
 export default function create() {
 
   const router = useRouter()
-
-  const editor = useRef<Quill>(null)
-
-  const taskEditor = useRef<Quill>(null)
 
   const [taskInfo, setTaskInfo] = useState<Partial<Task>>({
     title: "",
@@ -95,13 +96,11 @@ export default function create() {
     setTaskInfo({ ...taskInfo, cover_image: result.filename })
   }
 
-  const textChange = () => {
-    let contents = editor.current.getSemanticHTML()
+  const textChange = (contents: string) => {
     setTaskInfo({ ...taskInfo, description: contents })
   }
 
-  const taskChange = () => {
-    let contents = taskEditor.current.getSemanticHTML()
+  const taskChange = (contents: string) => {
     setTaskInfo({ ...taskInfo, task: contents })
   }
 
@@ -133,7 +132,7 @@ export default function create() {
       <Input type="number" placeholder="the maximum count of winners" min={0} className="mt-5 px-6 py-3 text-base" value={taskInfo.reward_count} onChange={(e) => updateTaskInfo({ reward_count: e.target.value })} />
       <div className="text-xl font-bold mt-10">Description</div>
       <div className="mt-5">
-        {/* <Editor ref={editor} options={editorConfig} defaultValue={new Delta()} onTextChange={textChange} className="mt-5 rounded-sm" /> */}
+        <Editor options={editorConfig} defaultValue={new Delta()} onTextChange={textChange} className="mt-5 rounded-sm" />
       </div>
       <div className="text-xl font-bold mt-10">Banner</div>
       {
@@ -156,7 +155,7 @@ export default function create() {
       }
       <div className="mt-10 text-xl font-bold">Task Guide</div>
       <div className="mt-5">
-        {/* <Editor ref={taskEditor} options={editorConfig} defaultValue={new Delta()} onTextChange={taskChange} className="mt-5 rounded-sm" /> */}
+        <Editor options={editorConfig} defaultValue={new Delta()} onTextChange={taskChange} className="mt-5 rounded-sm" />
       </div>
       <div className="mt-10 text-xl font-bold">Proof Method</div>
       <Select className="text-base mt-5 w-2/4" size="large" defaultValue="manual">
