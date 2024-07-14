@@ -9,7 +9,7 @@ import Image from "next/image"
 import { useContext, useEffect, useState } from "react"
 
 const updateUserProfile = async (userInfo: Partial<User>) => {
-  await fetch("http://localhost:3000/api/profile", {
+  await fetch("/api/profile", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
