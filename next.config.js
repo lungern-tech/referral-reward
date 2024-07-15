@@ -4,13 +4,7 @@ const nextConfig = {
   reactStrictMode: true,
   trailingSlash: true,
   cleanDistDir: true,
-  transpilePackages: [
-    "@ant-design",
-    "antd",
-    "rc-util",
-    "rc-pagination",
-    "rc-picker",
-  ],
+  transpilePackages: [],
   async headers() {
     return [
       {
