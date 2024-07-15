@@ -3,7 +3,7 @@ import CdnImage from "@/components/cdn-image";
 import Task from "@/models/Task";
 import ChainMap from "@/utils/ChainMap";
 import { firstOfDay } from "@/utils/DateFormat";
-import { InboxOutlined } from "@ant-design/icons";
+import { DeleteOutlined, InboxOutlined, LoadingOutlined } from "@ant-design/icons";
 import { Button, DatePicker, Input, Select, Upload, notification } from "antd";
 import { UploadChangeParam } from "antd/es/upload";
 import dayjs from "dayjs";
@@ -42,6 +42,8 @@ export default function create() {
     cover_image: "",
     description: ""
   })
+
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     let diff = dayjs(taskInfo.end_time).diff(taskInfo.start_time, 'minutes')
@@ -86,14 +88,23 @@ export default function create() {
   )
 
   const uploadCoverImage = async (info: UploadChangeParam) => {
+    if (loading) return
+    setLoading(true)
     let formData = new FormData();
     formData.append('file', info.file as unknown as File)
     formData.append('name', info.file.name)
-    let result = await fetch('/api/file/upload', {
-      method: 'POST',
-      body: formData,
-    }).then<{ filename: string }>(res => res.json())
-    setTaskInfo({ ...taskInfo, cover_image: result.filename })
+    try {
+      let result = await fetch('/api/file/upload', {
+        method: 'POST',
+        body: formData,
+      }).then<{ filename: string }>(res => res.json())
+
+      setTaskInfo({ ...taskInfo, cover_image: result.filename })
+    } catch (e) {
+
+    } finally {
+      setLoading(false)
+    }
   }
 
   const textChange = (contents: string) => {
@@ -137,10 +148,22 @@ export default function create() {
       <div className="text-xl font-bold mt-10">Banner</div>
       {
         taskInfo.cover_image ? (
-          <CdnImage className="mt-5 ring-1 rounded-md" src={`${taskInfo.cover_image}`} width={720} height={50} alt="cover" />
+          <div className="relative">
+            <CdnImage className="mt-5 ring-1 rounded-md w-full" src={`${taskInfo.cover_image}`} width={720} height={50} alt="cover" />
+            <div className="absolute z-10 left-0 top-0 w-full h-full transition opacity-0 hover:opacity-100 bg-gray-300/30 flex items-center justify-center" >
+              <DeleteOutlined onClick={() => setTaskInfo({ ...taskInfo, cover_image: '' })} className="text-red-700 text-2xl cursor-pointer mix-blend-multiply" />
+            </div>
+          </div>
         ) : (
           <div className="mt-5" >
-            <Dragger onChange={uploadCoverImage} beforeUpload={() => false} showUploadList={false}>
+            <Dragger disabled={loading} onChange={uploadCoverImage} beforeUpload={() => false} showUploadList={false}>
+              {
+                loading ? (
+                  <div className="z-10 absolute left-0 top-0 h-full w-full bg-gray-300/30 flex justify-center items-center" >
+                    <LoadingOutlined className="text-white text-3xl" size={90} />
+                  </div>
+                ) : null
+              }
               <p className="text-6xl text-blue-600">
                 <InboxOutlined />
               </p>

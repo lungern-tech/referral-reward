@@ -4,6 +4,7 @@ import UserContext from "@/context/UserContext"
 import Interaction, { InteractStatus } from "@/models/Interaction"
 import Task from "@/models/Task"
 import ChainMap from "@/utils/ChainMap"
+import { DeleteOutlined } from "@ant-design/icons"
 import { Button, notification } from "antd"
 import { useRouter } from "next/navigation"
 import { useContext, useState } from "react"
@@ -63,7 +64,12 @@ export default function ({ task, interaction }: { task: Task, interaction?: Inte
                 <>
                   {
                     file ? (
-                      <CdnImage className="rounded-md" src={`${file}`} width={1000} height={500} alt="proof" />
+                      <div className="relative">
+                        <CdnImage className="rounded-md" src={`${file}`} width={1000} height={500} alt="proof" />
+                        <div className="absolute z-10 left-0 top-0 w-full h-full transition opacity-0 hover:opacity-100 bg-gray-300/30 flex items-center justify-center" >
+                          <DeleteOutlined onClick={() => fileChange("")} className="text-red-700 text-2xl cursor-pointer mix-blend-multiply" />
+                        </div>
+                      </div>
                     ) : (
                       <Upload proofChange={fileChange}></Upload>
                     )
