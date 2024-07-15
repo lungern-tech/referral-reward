@@ -1,6 +1,7 @@
 import Login from "@/components/login";
 import Image from "next/image";
 import Link from "next/link";
+import DevTip from "./dev-tip";
 import "./index.scss";
 
 const Header = () => {
@@ -9,6 +10,7 @@ const Header = () => {
   return (
     <div className="sticky top-0 z-[2] bg-black">
       <div className="flex flex-row gap-3 filter backdrop-blur-sm items-center border-b border-gray-dark-500 px-6 py-3 pl-5">
+        <DevTip />
         <Link className="mr-auto" href={'/'}>
           <Image src={'/images/logo.png'} alt="logo" width={50} height={50} />
         </Link>
