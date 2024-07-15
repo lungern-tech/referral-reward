@@ -20,7 +20,7 @@ export default function ({ children, reward, reward_count, chain, start, end, ta
     hash
   })
 
-  const realChain = ChainMap[chain]
+  const realChain = ChainMap[chain].chain
 
   const createReward = () => {
     if (isLoading) return

@@ -2,21 +2,13 @@ import { injected } from '@wagmi/core'
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
 import { http } from 'viem'
 import {
-  mainnet,
-  opBNB,
-  opBNBTestnet,
-  sepolia,
   type Chain
 } from 'wagmi/chains'
+import ChainMap from './ChainMap'
 import { ConstantsUtil } from './ConstantsUtil'
 
 export const WagmiConstantsUtil = {
-  chains: [
-    mainnet,
-    sepolia,
-    opBNB,
-    opBNBTestnet
-  ] as [Chain, ...Chain[]]
+  chains: Object.values(ChainMap).map(e => e.chain) as [Chain, ...Chain[]]
 }
 
 export function getWagmiConfig(type: 'default' | 'email') {
@@ -27,9 +19,14 @@ export function getWagmiConfig(type: 'default' | 'email') {
     connectors: [injected()],
     ssr: true,
     transports: {
-      [sepolia.id]: http("https://eth-sepolia.g.alchemy.com/v2/9Qty87XLyHf_HKHPmSPpwWepafImsug6", {
-        batch: true
-      })
+      ...Object.values(ChainMap).reduce((pre, curr) => {
+        return {
+          ...pre,
+          [curr.chain.id]: http(curr.rpc, {
+            batch: true
+          })
+        }
+      }, {})
     }
   }
 

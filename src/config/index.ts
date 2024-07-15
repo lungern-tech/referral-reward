@@ -1,6 +1,7 @@
+import ChainMap from '@/utils/ChainMap'
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
+import { Chain } from 'viem'
 import { cookieStorage, createStorage } from 'wagmi'
-import { mainnet, sepolia, opBNB, opBNBTestnet } from 'wagmi/chains'
 
 export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID
 
@@ -10,11 +11,11 @@ if (!projectId) {
 
 export const config = defaultWagmiConfig({
   projectId,
-  chains: [mainnet, sepolia, opBNB, opBNBTestnet],
+  chains: Object.values(ChainMap).map(e => e.chain) as [Chain, ...Chain[]],
   metadata: {
     name: 'My App',
     description: 'My app description',
-    url: 'http://localhost:3000',
+    url: process.env.SIGN_URL,
     icons: ['https://avatars.githubusercontent.com/u/37784886']
   },
   enableWalletConnect: true,

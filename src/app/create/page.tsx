@@ -121,7 +121,7 @@ export default function create() {
       <Select size="large" placeholder="Choose Which chain that winner can get reward" className="text-base w-full" value={taskInfo.chain} onChange={(e) => updateTaskInfo({ chain: e })} >
         {
           Object.entries(ChainMap).map(([key, value]) => (
-            <Option key={key} value={key}>{value.name}</Option>
+            <Option key={key} value={key}>{value.chain.name}</Option>
           ))
         }
       </Select>

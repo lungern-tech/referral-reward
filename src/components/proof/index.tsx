@@ -56,7 +56,7 @@ export default function ({ task, interaction }: { task: Task, interaction?: Inte
           ) :
             interaction && interaction.status === InteractStatus.RewardSent ? (
               <div className="w-full text-center">
-                You have received the reward. <a href={`${ChainMap[task.chain].blockExplorers.default.url}/tx/${interaction.transition_hash}`} target="_blank">Check</a> for more details
+                You have received the reward. <a href={`${ChainMap[task.chain].chain.blockExplorers.default.url}/tx/${interaction.transition_hash}`} target="_blank">Check</a> for more details
               </div>
             ) :
               (

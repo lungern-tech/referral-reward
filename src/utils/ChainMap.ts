@@ -1,10 +1,10 @@
-import { Chain, mainnet, opBNB, opBNBTestnet, sepolia } from "viem/chains";
+import { Chain, sepolia } from "viem/chains";
 
-const ChainMap: Record<number, Chain> = {
-  [opBNB.id]: opBNB,
-  [opBNBTestnet.id]: opBNBTestnet,
-  [mainnet.id]: mainnet,
-  [sepolia.id]: sepolia
+const ChainMap: Record<number, { chain: Chain, rpc: string }> = {
+  [sepolia.id]: {
+    chain: sepolia,
+    rpc: "https://eth-sepolia.g.alchemy.com/v2/9Qty87XLyHf_HKHPmSPpwWepafImsug6"
+  }
 }
 
 

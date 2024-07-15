@@ -29,7 +29,7 @@ export default function ReferralCard({ item, task, onRefresh }: { item: IJoinIte
   }, [isSuccess])
 
   const sendReward = () => {
-    const realChain = ChainMap[task.chain]
+    const realChain = ChainMap[task.chain].chain
     const address = item.user.wallet
     setLoading(true)
     writeContract({
@@ -63,7 +63,7 @@ export default function ReferralCard({ item, task, onRefresh }: { item: IJoinIte
   }
 
   const handleSuccess = () => {
-    const realChain = ChainMap[task.chain]
+    const realChain = ChainMap[task.chain].chain
     setLoading(false)
     fetch('/api/interact', {
       method: 'PUT',
