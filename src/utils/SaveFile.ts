@@ -14,6 +14,7 @@ const saveFile = async (file: File, name: string, storagePath: string) => {
   const uniqueSuffix = Date.now() + '_' + Math.round(Math.random() * 1E9);
   let appendix = name.split('.').pop();
   const filename = `${uniqueSuffix}.${appendix}`;
+  console.log("start to upload file: ", filename)
   const upload = new Upload({
     client: s3Client,
     params: {
@@ -23,6 +24,8 @@ const saveFile = async (file: File, name: string, storagePath: string) => {
       ContentType: file.type
     },
   });
+
+  console.log("uploading...")
 
   try {
     upload.on('httpUploadProgress', (progress) => {
