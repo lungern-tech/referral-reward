@@ -1,5 +1,6 @@
 'use client'
 import { abi } from '@/abi/Reward.sol/Reward.json'
+import CdnImage from '@/components/cdn-image'
 import UserContext from '@/context/UserContext'
 import type Interaction from '@/models/Interaction'
 import type Task from '@/models/Task'
@@ -7,7 +8,6 @@ import type User from '@/models/User'
 import ChainMap from '@/utils/ChainMap'
 import { CheckCircleFilled, CloseCircleFilled, LoadingOutlined } from '@ant-design/icons'
 import { Button, Card, notification } from 'antd'
-import Image from 'next/image'
 import { useContext, useEffect, useState } from 'react'
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 
@@ -142,7 +142,7 @@ export default function ReferralCard({ item, task, onRefresh }: { item: IJoinIte
         <div className='absolute -left-0 -top-0 px-2 py-1 rounded-tl-md rounded-br-md bg-green-500 text-white'>
           {item.status}
         </div>
-        <Image
+        <CdnImage
           src={item.proof.image_link}
           width={300}
           height={100}

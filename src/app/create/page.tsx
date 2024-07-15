@@ -1,4 +1,5 @@
 "use client";
+import CdnImage from "@/components/cdn-image";
 import Task from "@/models/Task";
 import ChainMap from "@/utils/ChainMap";
 import { firstOfDay } from "@/utils/DateFormat";
@@ -7,7 +8,6 @@ import { Button, DatePicker, Input, Select, Upload, notification } from "antd";
 import { UploadChangeParam } from "antd/es/upload";
 import dayjs from "dayjs";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import { useRouter } from 'next/navigation';
 import { QuillOptions } from "quill";
 import Delta from "quill-delta";
@@ -137,7 +137,7 @@ export default function create() {
       <div className="text-xl font-bold mt-10">Banner</div>
       {
         taskInfo.cover_image ? (
-          <Image className="mt-5 ring-1 rounded-md" src={`${taskInfo.cover_image}`} width={720} height={50} alt="cover" />
+          <CdnImage className="mt-5 ring-1 rounded-md" src={`${taskInfo.cover_image}`} width={720} height={50} alt="cover" />
         ) : (
           <div className="mt-5" >
             <Dragger onChange={uploadCoverImage} beforeUpload={() => false} showUploadList={false}>

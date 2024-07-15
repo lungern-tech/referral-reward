@@ -1,12 +1,12 @@
+import CdnImage from "@/components/cdn-image";
 import Task from "@/models/Task";
-import Image from "next/image";
 import Link from "next/link";
 
 export default function ({ task, className }: { task: Task, className?: string }) {
   return (
     <Link className={className} href={`/account/created/${task._id}`}>
       <div className="p-2 border border-gray-dark-500 rounded-lg relative">
-        <Image className="rounded-lg" src={`${task.cover_image}`} width={500} height={1} alt="cover_image"></Image>
+        <CdnImage className="rounded-lg" src={`${task.cover_image}`} width={500} height={1} alt="cover_image" />
         <div className="p-2">
           <div className="name font-extrabold text-ellipsis overflow-hidden whitespace-nowrap mb-2">
             {task.title}

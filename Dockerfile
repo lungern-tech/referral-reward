@@ -13,7 +13,6 @@ WORKDIR /app
 COPY . .
 COPY --from=deps /app/node_modules ./node_modules
 RUN yarn build
-RUN rm -rf ./out/cache
 
 
 # Production image, copy all the files and run next
@@ -29,13 +28,17 @@ RUN adduser -S nextjs -u 1001
 COPY --from=builder /app/next.config.js ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/out ./out
+RUN rm -rf ./out/cache
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/.env ./.env
-
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/.env.local ./
+COPY --from=builder /app/.env.production.local ./
+RUN echo $(ls -la)
 # RUN yarn run version
 
 # RUN pwd
+
+RUN chmod -R nodejs:nextjs /app
 
 USER nextjs
 

@@ -1,4 +1,5 @@
 import { auth } from "@/app/auth";
+import CdnImage from "@/components/cdn-image";
 import Proof from "@/components/proof";
 import Title from "@/components/title";
 import client from "@/lib/mongodb";
@@ -8,7 +9,6 @@ import User from "@/models/User";
 import { format } from "@/utils/DateFormat";
 import { CalendarOutlined } from "@ant-design/icons";
 import { ObjectId } from "mongodb";
-import Image from "next/image";
 
 export default async function ({ params }: { params: { id: string } }) {
 
@@ -53,7 +53,7 @@ export default async function ({ params }: { params: { id: string } }) {
   return (
     <div className="grid grid-cols-5">
       <div className="col-span-3 pr-12 pb-8 border-r border-gray-dark-500 pt-8" >
-        <Image className="rounded-md border-gray-dark-500 border" width={1000} height={700} alt="cover_image" src={`${task.cover_image}`}></Image>
+        <CdnImage className="rounded-md border-gray-dark-500 border" width={1000} height={700} alt="cover_image" src={`${task.cover_image}`} />
         <div className="text-3xl font-bold mt-8">
           {task.title}
         </div>
@@ -121,7 +121,7 @@ export default async function ({ params }: { params: { id: string } }) {
         <div className="flex gap-2 mt-4">
           {
             topWinners.map(item => (
-              <Image key={String(item._id)} src={item.user.avatar} width={40} height={40} alt={item.user.name} />
+              <CdnImage key={String(item._id)} src={item.user.avatar} width={40} height={40} alt={item.user.name} />
             ))
           }
         </div>

@@ -5,9 +5,9 @@ import Interaction, { InteractStatus } from "@/models/Interaction"
 import Task from "@/models/Task"
 import ChainMap from "@/utils/ChainMap"
 import { Button, notification } from "antd"
-import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useContext, useState } from "react"
+import CdnImage from "../cdn-image"
 import Upload from "../upload"
 
 export default function ({ task, interaction }: { task: Task, interaction?: Interaction }) {
@@ -63,8 +63,7 @@ export default function ({ task, interaction }: { task: Task, interaction?: Inte
                 <>
                   {
                     file ? (
-                      <Image className="rounded-md" src={`${file}`} width={1000} height={500} alt="proof">
-                      </Image >
+                      <CdnImage className="rounded-md" src={`${file}`} width={1000} height={500} alt="proof" />
                     ) : (
                       <Upload proofChange={fileChange}></Upload>
                     )

@@ -5,8 +5,8 @@ import User from "@/models/User"
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons"
 import { Button, Input, Upload, notification } from "antd"
 import { UploadChangeParam } from "antd/es/upload"
-import Image from "next/image"
 import { useContext, useEffect, useState } from "react"
+import CdnImage from "../cdn-image"
 
 const updateUserProfile = async (userInfo: Partial<User>) => {
   await fetch("/api/profile", {
@@ -70,7 +70,7 @@ export default function () {
         <div className="relative">
           {
             user ? (
-              <Image className="size-[100px] rounded-full" src={`${user.avatar}`} width={56} height={56} alt="avatar"></Image>
+              <CdnImage className="size-[100px] rounded-full" src={`${user.avatar}`} width={56} height={56} alt="avatar" />
             ) : (
               <>
               </>

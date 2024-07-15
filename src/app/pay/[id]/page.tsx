@@ -1,10 +1,10 @@
+import CdnImage from '@/components/cdn-image'
 import Submit from '@/components/pay/submit'
 import mongoClient from '@/lib/mongodb'
 import type Task from '@/models/Task'
 import { TaskStatus } from '@/models/Task'
 import { format } from '@/utils/DateFormat'
 import { ObjectId } from 'mongodb'
-import Image from 'next/image'
 
 const getTask = async (id: string) => {
   const task = await mongoClient.collection<Task>('task').findOne({ _id: new ObjectId(id) })
@@ -21,11 +21,11 @@ export default async function ({ params }: { params: { id: string } }) {
       <div className='mt-5 flex'>
         <div>(UTC+8){format(new Date(task.start_time), 'YYYY-MM-DD hh:mm')} ~ {format(new Date(task.end_time), 'YYYY-MM-DD hh:mm')}</div>
       </div>
-      <Image className='rounded-md mt-5'
+      <CdnImage className='rounded-md mt-5'
         src={`${task.cover_image}`}
-        width="720"
-        height="20"
-        alt='cover_image'></Image>
+        width={720}
+        height={20}
+        alt='cover_image' />
       <div className="font-xl text-gray-dark-400">
         <div className='mt-5'>
           <div className=''

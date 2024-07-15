@@ -9,8 +9,6 @@ const s3Client = new S3Client({
   },
 });
 
-
-
 const saveFile = async (file: File, name: string, storagePath: string) => {
   console.log('start to upload file')
   const uniqueSuffix = Date.now() + '_' + Math.round(Math.random() * 1E9);
