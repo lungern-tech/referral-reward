@@ -5,15 +5,16 @@ import { Avatar } from "antd";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useContext } from "react";
+import { useAccount } from "wagmi";
 
 const UserCenter = () => {
-
   const { user } = useContext(UserContext)
   const session = useSession();
+  const { isConnected } = useAccount()
   return (
     <>
       {
-        session.status === 'authenticated' && user ?
+        session.status === 'authenticated' && user && isConnected ?
           (
             <>
               <Link href={'/create'} className="ml-auto inline-flex

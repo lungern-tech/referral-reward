@@ -1,3 +1,4 @@
+import Analysis from "@/components/analysis"
 import Footer from "@/components/footer"
 import Header from "@/components/header"
 import { config } from '@/config'
@@ -57,6 +58,7 @@ export default async function RootLayout({
           </QueryClientProvider>
         </WagmiProvider>
       </body>
+      <Analysis />
     </html>
   )
 }
