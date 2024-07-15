@@ -12,8 +12,8 @@ FROM node:alpine AS builder
 WORKDIR /app
 COPY . .
 COPY --from=deps /app/node_modules ./node_modules
-RUN yarn build
-
+RUN yarn build --debug
+RUN rm -rf ./.next/cache
 
 # Production image, copy all the files and run next
 FROM node:alpine AS runner
@@ -26,19 +26,11 @@ RUN adduser -S nextjs -u 1001
 
 # You only need to copy next.config.js if you are NOT using the default configuration
 COPY --from=builder /app/next.config.js ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/out ./out
-RUN rm -rf ./out/cache
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./
 COPY --from=builder /app/.env.local ./
 COPY --from=builder /app/.env.production.local ./
-RUN echo $(ls -la)
-# RUN yarn run version
-
-# RUN pwd
-
-RUN chmod -R nodejs:nextjs /app
 
 USER nextjs
 
@@ -51,4 +43,4 @@ ENV PORT 3000
 # Uncomment the following line in case you want to disable telemetry.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
-CMD ["node_modules/.bin/next", "start"]
+CMD ["node", "server.js"]

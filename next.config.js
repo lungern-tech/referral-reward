@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "standalone",
   reactStrictMode: true,
   trailingSlash: true,
-  distDir: 'out',
   cleanDistDir: true,
   transpilePackages: [
     "@ant-design",
