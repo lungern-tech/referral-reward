@@ -1,6 +1,7 @@
 "use client";
 import CdnImage from "@/components/cdn-image";
 import Task from "@/models/Task";
+import getPrice from "@/service/getPrice";
 import ChainMap from "@/utils/ChainMap";
 import { firstOfDay } from "@/utils/DateFormat";
 import { DeleteOutlined, InboxOutlined, LoadingOutlined } from "@ant-design/icons";
@@ -12,6 +13,7 @@ import { useRouter } from 'next/navigation';
 import { QuillOptions } from "quill";
 import Delta from "quill-delta";
 import { useEffect, useState } from "react";
+import { useChainId } from "wagmi";
 import "./index.scss";
 
 const Editor = dynamic(() => import("@/components/editor"), {
@@ -30,6 +32,8 @@ export default function create() {
 
   const router = useRouter()
 
+  const chainId = useChainId()
+
   const [taskInfo, setTaskInfo] = useState<Partial<Task>>({
     title: "",
     duration: null,
@@ -40,7 +44,8 @@ export default function create() {
     reward_count: null,
     status: "created",
     cover_image: "",
-    description: ""
+    description: "",
+    reward_token: "USDT"
   })
 
   const [loading, setLoading] = useState(false)
@@ -54,6 +59,11 @@ export default function create() {
     setTaskInfo({ ...taskInfo, duration: `${day} days ${hour} hours ${minute} minutes` })
   }, [taskInfo.start_time, taskInfo.end_time])
 
+  useEffect(() => {
+    getPrice(1).then((data) => {
+      console.log(data)
+    })
+  }, [taskInfo.reward_token])
 
   const updateTaskInfo = (params: Record<string, unknown>) => {
     setTaskInfo({ ...taskInfo, ...params })
@@ -82,7 +92,7 @@ export default function create() {
   }
 
   const addonAfter = (
-    <Select defaultValue="usdt" className="!text-white">
+    <Select onChange={(e) => setTaskInfo({ reward_token: e })} defaultValue="usdt" className="!text-white">
       <Option value="usdt">USDT</Option>
     </Select>
   )

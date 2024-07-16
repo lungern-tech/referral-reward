@@ -18,6 +18,7 @@ export default interface Task {
   duration: string
   reward: number
   reward_count: number
+  reward_token: string
   status: "created" | "active" | "inactive" | "end"
   created_at: Date,
   updated_at: Date,
