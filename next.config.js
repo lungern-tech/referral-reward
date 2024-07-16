@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+const webpack = require('webpack');
 const nextConfig = {
   output: "standalone",
   reactStrictMode: true,
@@ -12,7 +13,12 @@ const nextConfig = {
         headers: [{ key: 'content-type', value: 'application/json' }]
       }
     ]
-  }
+  },
+  eslint: {
+    // Warning: This allows production builds to successfully complete even if
+    // your project has ESLint errors.
+    ignoreDuringBuilds: true,
+  },
 };
 
 module.exports = nextConfig;

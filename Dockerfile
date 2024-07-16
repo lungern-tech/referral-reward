@@ -1,36 +1,44 @@
 # Install dependencies only when needed
 FROM node:alpine AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
-RUN apk add --update --no-cache python3 make gcc g++
+# RUN apk add --no-cache libc6-compat
+# RUN apk add --update --no-cache python3 make gcc g++
 WORKDIR /app
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
-
-# # Rebuild the source code only when needed
-FROM node:alpine AS builder
-WORKDIR /app
-COPY . .
-COPY --from=deps /app/node_modules ./node_modules
-RUN yarn build --debug
-RUN rm -rf ./.next/cache
-
-# Production image, copy all the files and run next
-FROM node:alpine AS runner
-WORKDIR /app
-
+# COPY package.json yarn.lock ./
+# RUN yarn install --frozen-lockfile
 ENV NODE_ENV production
 
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
 
+COPY  next.config.js ./
+COPY --chown=nextjs:nodejs ./.next/standalone ./
+COPY ./.next/static ./.next/static
+COPY ./public ./public
+COPY .env.local ./
+COPY ./.env.production.local ./
+
+# # Rebuild the source code only when needed
+# FROM node:alpine AS builder
+# WORKDIR /app
+# COPY . .
+# COPY --from=deps /app/node_modules ./node_modules
+# RUN yarn build --debug
+# RUN rm -rf ./.next/cache
+
+# Production image, copy all the files and run next
+# FROM node:alpine AS runner
+# WORKDIR /app
+
+
+
 # You only need to copy next.config.js if you are NOT using the default configuration
-COPY --from=builder /app/next.config.js ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.env.local ./
-COPY --from=builder /app/.env.production.local ./
+# COPY --from=builder /app/next.config.js ./
+# COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+# COPY --from=builder /app/.next/static ./.next/static
+# COPY --from=builder /app/public ./public
+# COPY --from=builder /app/.env.local ./
+# COPY --from=builder /app/.env.production.local ./
 
 USER nextjs
 
