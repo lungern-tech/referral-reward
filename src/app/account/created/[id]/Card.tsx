@@ -55,6 +55,7 @@ export default function ReferralCard({ item, task, onRefresh }: { item: IJoinIte
         })
       },
       onError(error, variables, context) {
+        console.log('send error: ', arguments)
         const errorName = (error.cause as { data: { errorName: string } }).data.errorName
         setLoading(false)
         handleError(errorName)

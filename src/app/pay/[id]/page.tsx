@@ -39,12 +39,12 @@ export default async function ({ params }: { params: { id: string } }) {
       <div className='mt-5'>
         <div className='flex'>
           <div className='mr-2'>Reward Amount: </div>
-          <div>{task.reward} * {task.reward_count} = {task.reward * task.reward_count} USDT</div>
+          <div>{task.reward} * {task.reward_count} *{task.token_price_usd} = {task.reward * task.reward_count * task.token_price_usd} USDT</div>
         </div>
 
         <div className='flex mt-2'>
           <div className='mr-2'>Total Cost: </div>
-          <div>{task.reward * task.reward_count} USDT</div>
+          <div>{task.reward * task.reward_count * task.token_price_usd} USDT</div>
         </div>
       </div>
       {

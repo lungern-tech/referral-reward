@@ -12,7 +12,6 @@ import { ObjectId } from "mongodb";
 
 export default async function ({ params }: { params: { id: string } }) {
 
-
   const task = await client.collection<Task>("task").findOne({ _id: new ObjectId(params.id) })
   const session = await auth()
   let interaction
@@ -72,7 +71,7 @@ export default async function ({ params }: { params: { id: string } }) {
         <div className="border border-b-0 border-gray-dark-500"></div>
         <div className="mt-8 font-bold text-2xl">Task</div>
         <div className="mt-4 text-xl rendered-html">
-          <div dangerouslySetInnerHTML={{ __html: task.task }}></div>
+          <div dangerouslySetInnerHTML={{ __html: task.task || "<p></p>" }}></div>
         </div>
         <div className="">
           <div className="mt-4" >
@@ -101,7 +100,7 @@ export default async function ({ params }: { params: { id: string } }) {
               <div className="flex">
                 <div>Token</div>
                 <div className="ml-auto inline-flex items-baseline">
-                  <span className="text-3xl">{task.reward}</span>
+                  <span className="text-3xl">{(task.reward * task.token_price_usd).toFixed(2)}</span>
                   <span className="text-3xl">USDT</span>
                   <span className="text-sm">/Winner</span>
                 </div>

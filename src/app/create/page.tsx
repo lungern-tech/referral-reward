@@ -1,6 +1,6 @@
 "use client";
 import CdnImage from "@/components/cdn-image";
-import Task from "@/models/Task";
+import Task, { TaskStatus } from "@/models/Task";
 import getPrice from "@/service/getPrice";
 import ChainMap from "@/utils/ChainMap";
 import { firstOfDay } from "@/utils/DateFormat";
@@ -43,13 +43,13 @@ export default function create() {
     reward: null,
     reward_in_usd: null,
     reward_count: null,
-    status: "created",
+    status: TaskStatus.Created,
     cover_image: "",
     description: "",
-    reward_token: "USDT"
+    reward_token: "USDT",
+    token_price_usd: 0,
   })
 
-  const [tokenPrice, setTokenPrice] = useState(0)
 
   const [loading, setLoading] = useState(false)
 
@@ -66,7 +66,7 @@ export default function create() {
   useEffect(() => {
     getPrice(chainId).then((data) => {
       if (data.data.length > 0) {
-        setTokenPrice(Number(data.data[0].lastPrice))
+        setTaskInfo({ ...taskInfo, token_price_usd: Number(data.data[0].lastPrice) })
       }
     })
   }, [taskInfo.reward_token])
@@ -140,6 +140,7 @@ export default function create() {
   const rewardChange = (e) => {
     let reward_in_usd;
     const value = e.target.value
+    const tokenPrice = taskInfo.token_price_usd
     if (tokenPrice) {
       reward_in_usd = tokenPrice * (Number(e.target.value) || 0)
     }
@@ -149,6 +150,7 @@ export default function create() {
   const rewardUsdChange = (e) => {
     let reward;
     const reward_in_usd = e.target.value
+    const tokenPrice = taskInfo.token_price_usd
     if (tokenPrice) {
       reward = Number(reward_in_usd) / tokenPrice
     }

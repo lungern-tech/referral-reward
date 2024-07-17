@@ -18,7 +18,7 @@ export default function ({ task, className }: { task: Task, className?: string }
             {task.title}
           </div>
           <div className="label">
-            <div className="border border-gray-dark-500 inline-block px-2 py-1 font-semibold rounded-md"><span className="text-green-500">{task.reward * task.reward_count}</span> USDT</div>
+            <div className="border border-gray-dark-500 inline-block px-2 py-1 font-semibold rounded-md"><span className="text-green-500">{Math.round(task.reward * task.reward_count * task.token_price_usd)}</span> USDT</div>
           </div>
         </div>
       </div>

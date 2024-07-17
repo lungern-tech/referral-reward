@@ -32,7 +32,7 @@ export default function ({ children, reward, reward_count, chain, start, end, ta
       abi,
       address: chainConfig.factory_address,
       functionName: 'createNewReward',
-      args: [Number(reward_count), rewardInDecimals.toString(), start, end, parseEther('0.00001', 'gwei')],
+      args: [Number(reward_count), rewardInDecimals.toString(), Math.round(start / 1000), Math.round(end / 1000), parseEther('0.00001', 'gwei')],
       chain: realChain,
       account: user.wallet as `0x${string}`,
       chainId: realChain.id,

@@ -2,6 +2,7 @@
 import type Interaction from '@/models/Interaction'
 import type Task from '@/models/Task'
 import type User from '@/models/User'
+import ChainMap, { IChainConfig } from '@/utils/ChainMap'
 import { Empty } from 'antd'
 import { useEffect, useState } from 'react'
 import Card from './Card'
@@ -46,8 +47,14 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
     })
   }
 
+  const [chainConfig, setChainConfig] = useState<IChainConfig>(null)
+
   useEffect(() => {
-    fetchList()
+    if (task) {
+      fetchList()
+      console.log(ChainMap, task.chain, ChainMap[task.chain])
+      setChainConfig(ChainMap[task.chain])
+    }
   }, [task])
 
 
@@ -55,7 +62,7 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
   return (
     <>
       {
-        task
+        task && chainConfig
           ? (
             <div >
               <div className=''>Contract Info</div>
@@ -65,11 +72,11 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
               </div>
               <div className='flex'>
                 <div className=''>Address: </div>
-                <a href="">{task.contract_address}</a>
+                <a target='_blank' href={`${chainConfig.chain.blockExplorers.default.url}/address/${task.contract_address}`}>{task.contract_address}</a>
               </div>
               <div className='flex'>
                 <div className=''>Deploy Hash: </div>
-                <div >{task.deploy_hash}</div>
+                <a target='_blank' href={`${chainConfig.chain.blockExplorers.default.url}/tx/${task.deploy_hash}`} >{task.deploy_hash}</a>
               </div>
             </div >
           )

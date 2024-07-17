@@ -19,7 +19,7 @@ export default function ({ task, className, user }: { task: Task, user: User, cl
             {task.title}
           </div>
           <div className="label">
-            <div className="rounded-md border-gray-dark-500 border inline-block px-2 py-1 font-semibold"> <span className="text-green-500">{Math.ceil(task.reward * task.reward_count)} </span>USDT</div>
+            <div className="rounded-md border-gray-dark-500 border inline-block px-2 py-1 font-semibold"> <span className="text-green-500">{Math.round(task.reward * task.reward_count * task.token_price_usd)} </span>USDT</div>
           </div>
         </div>
       </div>
