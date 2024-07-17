@@ -41,6 +41,7 @@ export default function create() {
     end_time: firstOfDay(new Date()),
     chain: null,
     reward: null,
+    reward_in_usd: null,
     reward_count: null,
     status: "created",
     cover_image: "",
@@ -48,11 +49,14 @@ export default function create() {
     reward_token: "USDT"
   })
 
+  const [tokenPrice, setTokenPrice] = useState(0)
+
   const [loading, setLoading] = useState(false)
+
+  const [submitLoading, setSubmitLoading] = useState(false)
 
   useEffect(() => {
     let diff = dayjs(taskInfo.end_time).diff(taskInfo.start_time, 'minutes')
-    console.log('diff', diff)
     const day = diff / (24 * 60);
     const hour = diff % (24 * 60) / 60;
     const minute = diff % (24 * 60) % 60;
@@ -60,14 +64,17 @@ export default function create() {
   }, [taskInfo.start_time, taskInfo.end_time])
 
   useEffect(() => {
-    getPrice(1).then((data) => {
-      console.log(data)
+    getPrice(chainId).then((data) => {
+      if (data.data.length > 0) {
+        setTokenPrice(Number(data.data[0].lastPrice))
+      }
     })
   }, [taskInfo.reward_token])
 
   const updateTaskInfo = (params: Record<string, unknown>) => {
     setTaskInfo({ ...taskInfo, ...params })
   }
+
 
 
   const createNewReward = () => {
@@ -77,11 +84,14 @@ export default function create() {
       })
       return
     }
+    setSubmitLoading(true)
     fetch('/api/task/create', {
       method: 'POST',
       body: JSON.stringify(taskInfo)
     }).then(res => res.json()).then((data: { insertedId: string }) => {
       router.push(`/pay/${data.insertedId}`)
+    }).finally(() => {
+      setSubmitLoading(false)
     })
   }
 
@@ -91,9 +101,11 @@ export default function create() {
     }
   }
 
+  const currentChain = ChainMap[chainId].chain.nativeCurrency.symbol
+
   const addonAfter = (
-    <Select onChange={(e) => setTaskInfo({ reward_token: e })} defaultValue="usdt" className="!text-white">
-      <Option value="usdt">USDT</Option>
+    <Select onChange={(e) => setTaskInfo({ reward_token: e })} defaultValue={currentChain} className="!text-white">
+      <Option value={currentChain}>{currentChain}</Option>
     </Select>
   )
 
@@ -125,6 +137,24 @@ export default function create() {
     setTaskInfo({ ...taskInfo, task: contents })
   }
 
+  const rewardChange = (e) => {
+    let reward_in_usd;
+    const value = e.target.value
+    if (tokenPrice) {
+      reward_in_usd = tokenPrice * (Number(e.target.value) || 0)
+    }
+    updateTaskInfo({ reward: value, reward_in_usd })
+  }
+
+  const rewardUsdChange = (e) => {
+    let reward;
+    const reward_in_usd = e.target.value
+    if (tokenPrice) {
+      reward = Number(reward_in_usd) / tokenPrice
+    }
+    updateTaskInfo({ reward_in_usd, reward })
+  }
+
   const cancelCreate = () => {
     router.back()
   }
@@ -139,7 +169,7 @@ export default function create() {
       <div className="text-xl font-bold mt-10">Duration</div>
       <Input value={taskInfo.duration} className="mt-5 px-6 py-3 text-base" placeholder="Duration of this campaign" readOnly />
       <div className="text-xl font-bold mt-10">Chains</div>
-      <Select size="large" placeholder="Choose Which chain that winner can get reward" className="text-base w-full" value={taskInfo.chain} onChange={(e) => updateTaskInfo({ chain: e })} >
+      <Select size="large" placeholder="Choose Which chain that winner can get reward mt-5" className="text-base w-full" value={taskInfo.chain} onChange={(e) => updateTaskInfo({ chain: e })} >
         {
           Object.entries(ChainMap).map(([key, value]) => (
             <Option key={key} value={key}>{value.chain.name}</Option>
@@ -147,8 +177,10 @@ export default function create() {
         }
       </Select>
       <div className="text-xl font-bold mt-10">Reward</div>
-      <Input placeholder="reward that one winner can get" size="large" type="number" min={0} className="mt-5" value={taskInfo.reward} onChange={(e) => updateTaskInfo({ reward: e.target.value })} addonAfter={addonAfter}>
-      </Input>
+      <div className="flex">
+        <Input placeholder="reward that one winner can get" size="large" type="number" min={0} className="mt-5 w-2/4" value={taskInfo.reward} onChange={rewardChange} addonAfter={addonAfter} />
+        <Input placeholder="equivalent usd " size="large" onChange={rewardUsdChange} value={taskInfo.reward_in_usd} className="mt-5 w-2/4" addonAfter={(<div className="text-white">USD</div>)} />
+      </div>
       <div className="text-xl font-bold mt-10">Count</div>
       <Input type="number" placeholder="the maximum count of winners" min={0} className="mt-5 px-6 py-3 text-base" value={taskInfo.reward_count} onChange={(e) => updateTaskInfo({ reward_count: e.target.value })} />
       <div className="text-xl font-bold mt-10">Description</div>
@@ -197,7 +229,7 @@ export default function create() {
         </Option>
       </Select>
       <div className="mt-10">
-        <Button size="large" type="primary" onClick={createNewReward}>Submit</Button>
+        <Button loading={submitLoading} size="large" type="primary" onClick={createNewReward}>Submit</Button>
         <Button size="large" className="ml-4" onClick={cancelCreate}>Cancel</Button>
       </div>
     </div >

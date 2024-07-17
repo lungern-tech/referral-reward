@@ -14,25 +14,29 @@ export default function ({ children, reward, reward_count, chain, start, end, ta
   const { user } = useContext(UserContext)
 
   const router = useRouter()
-
   const { data: hash, writeContract } = useWriteContract()
   const { isLoading, isSuccess, data } = useWaitForTransactionReceipt({
     hash
   })
 
-  const realChain = ChainMap[chain].chain
+  const chainConfig = ChainMap[chain]
+  const realChain = chainConfig.chain
+
 
   const createReward = () => {
     if (isLoading) return
+    console.log(reward, realChain.nativeCurrency.decimals)
+    const rewardInDecimals = Math.round(reward * 10 ** realChain.nativeCurrency.decimals)
+    const totalCost = Math.round(reward_count * rewardInDecimals).toString()
     writeContract({
       abi,
-      address: '0xa64a313c856b93f23e423924d84ab6078f995059',
+      address: chainConfig.factory_address,
       functionName: 'createNewReward',
-      args: [Math.round(reward * 10 ** realChain.nativeCurrency.decimals), reward_count, start, end],
+      args: [Number(reward_count), rewardInDecimals.toString(), start, end, parseEther('0.00001', 'gwei')],
       chain: realChain,
       account: user.wallet as `0x${string}`,
       chainId: realChain.id,
-      value: parseEther('0.01')
+      value: totalCost
     }, {
       onSuccess: async (data) => {
         fetch('/api/task/update', {
@@ -60,7 +64,8 @@ export default function ({ children, reward, reward_count, chain, start, end, ta
         })
       },
       onError(error, variables, context) {
-        console.log('error: ', error, variables, context)
+        console.log('error: ', error, 'variables', variables, 'context', context)
+        console.log(arguments)
       }
     })
   }
@@ -75,7 +80,9 @@ export default function ({ children, reward, reward_count, chain, start, end, ta
             topics: log.topics
           })
           if (decodedLog.eventName === 'CreateRewardSuccess') {
-            const contractAddress = (decodedLog.args as unknown as { contractAddress: string }).contractAddress
+            console.log('decodeEventLog: ', decodedLog)
+            const emitArgs = decodedLog.args as unknown as { contractAddress: string, reward_address: string }
+            const contractAddress = emitArgs.contractAddress || emitArgs.reward_address
             fetch('/api/task/update', {
               method: 'POST',
               body: JSON.stringify({

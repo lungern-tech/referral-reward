@@ -1,10 +1,16 @@
 import CdnImage from "@/components/cdn-image";
-import Task from "@/models/Task";
+import Task, { TaskStatus } from "@/models/Task";
 import Link from "next/link";
 
 export default function ({ task, className }: { task: Task, className?: string }) {
+  const link = () => {
+    if (task.status === TaskStatus.Created) {
+      return `/pay/${task._id}`
+    }
+    return `/account/created/${task._id}`
+  }
   return (
-    <Link className={className} href={`/account/created/${task._id}`}>
+    <Link className={className} href={link()}>
       <div className="p-2 border border-gray-dark-500 rounded-lg relative">
         <CdnImage className="rounded-lg" src={`${task.cover_image}`} width={500} height={1} alt="cover_image" />
         <div className="p-2">

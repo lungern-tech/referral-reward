@@ -1,6 +1,19 @@
+import { bsc, bscTestnet, mainnet, opBNB, opBNBTestnet, sepolia } from "viem/chains"
+
+const testnetConverter = {
+  [sepolia.id]: mainnet.id,
+  [bscTestnet.id]: bsc.id,
+  [opBNBTestnet.id]: opBNB.id
+}
+
+
+
 const getPrice = (chainId: number, contractAddress?: string) => {
+
+  const mainnetChainId = testnetConverter[chainId] || chainId
+
   let queryParams = new URLSearchParams({
-    chainId: String(chainId),
+    chainId: String(mainnetChainId),
   })
   if (contractAddress) {
     queryParams.append('contractAddress', contractAddress)
