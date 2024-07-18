@@ -74,9 +74,7 @@ export default async function ({ params }: { params: { id: string } }) {
         <Submit
           className="mt-8"
           task={task}
-        >
-          Submit
-        </Submit>
+        />
       ) : (
         <div>Contract has been deployed</div>
       )}
