@@ -1,3 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .ql-show {
+    &.ql-container,
+    &.ql-toolbar {
+      @apply border-slate-200;
+    }
+  }
+}
+
 .ql-editor {
   min-height: 300px;
 
@@ -8,13 +21,6 @@
 
 .ql-snow {
   font-size: 1.25rem !important;
-
-  &.ql-container,
-  &.ql-toolbar {
-    --tw-border-opacity: 1;
-    border-color: rgb(26 26 26 / var(--tw-border-opacity));
-
-  }
 
   &.ql-toolbar {
     border-top-left-radius: 0.5rem;

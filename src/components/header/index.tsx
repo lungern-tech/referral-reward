@@ -1,17 +1,27 @@
-import Login from "@/components/login";
-import Image from "next/image";
-import Link from "next/link";
-import DevTip from "./dev-tip";
-import "./index.scss";
+import Login from '@/components/login'
+import Image from 'next/image'
+import Link from 'next/link'
+import DevTip from './dev-tip'
+import './index.scss'
 
 const Header = () => {
-
   return (
-    <div className="sticky top-0 z-[2] bg-black">
-      <div className="flex flex-row gap-3 filter backdrop-blur-sm items-center border-b border-gray-dark-500 px-6 py-3 pl-5">
+    <div className="sticky top-0 z-[2] ">
+      <div className="flex flex-row gap-3 filter text-slate-900 backdrop-blur-lg items-center border-b border-slate-100  px-6 py-3 pl-5">
         <DevTip />
-        <Link className="mr-auto" href={'/'}>
-          <Image src={'/images/logo.png'} alt="logo" width={50} height={50} />
+        <Link
+          className="mr-auto flex items-center cursor-pointer"
+          href={'/'}
+        >
+          <Image
+            src={'/images/logo.png'}
+            alt="logo"
+            width={50}
+            height={50}
+          />
+          <span className="ml-2 font-semibold text-xl text-slate-700">
+            Referral to Earn
+          </span>
         </Link>
         <Login />
       </div>
@@ -19,4 +29,4 @@ const Header = () => {
   )
 }
 
-export default Header;
+export default Header

@@ -19,9 +19,11 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    fetch(`/api/task/search?id=${id}`).then(async res => await res.json()).then(data => {
-      setTask(data)
-    })
+    fetch(`/api/task/search?id=${id}`)
+      .then(async (res) => await res.json())
+      .then((data) => {
+        setTask(data)
+      })
   }, [])
 
   const fetchList = () => {
@@ -35,16 +37,20 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
     formData.append('page_size', pageSize.toString())
     fetch('/api/interact/list', {
       method: 'POST',
-      body: formData
-    }).then(async res => await res.json()).then((data: [{ results: IJoinItem[], totalCount: [{ total: number }] }]) => {
-      setJoinedList(data[0].results || [])
-      if (!data[0].totalCount.length) {
-        setTotalCount(0)
-      } else {
-        setTotalCount(data[0].totalCount[0].total)
-      }
-      setLoading(false)
+      body: formData,
     })
+      .then(async (res) => await res.json())
+      .then(
+        (data: [{ results: IJoinItem[]; totalCount: [{ total: number }] }]) => {
+          setJoinedList(data[0].results || [])
+          if (!data[0].totalCount.length) {
+            setTotalCount(0)
+          } else {
+            setTotalCount(data[0].totalCount[0].total)
+          }
+          setLoading(false)
+        }
+      )
   }
 
   const [chainConfig, setChainConfig] = useState<IChainConfig>(null)
@@ -57,61 +63,72 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
     }
   }, [task])
 
-
-
   return (
     <>
-      {
-        task && chainConfig
-          ? (
-            <div >
-              <div className=''>Contract Info</div>
-              <div className='flex'>
-                <div className=''>Chain: </div>
-                <div className=''>{task.chain}</div>
-              </div>
-              <div className='flex'>
-                <div className=''>Address: </div>
-                <a target='_blank' href={`${chainConfig.chain.blockExplorers.default.url}/address/${task.contract_address}`}>{task.contract_address}</a>
-              </div>
-              <div className='flex'>
-                <div className=''>Deploy Hash: </div>
-                <a target='_blank' href={`${chainConfig.chain.blockExplorers.default.url}/tx/${task.deploy_hash}`} >{task.deploy_hash}</a>
-              </div>
-            </div >
-          )
-          : null
-      }
-      <div>
-        <div></div>
+      {task && chainConfig ? (
+        <div className="border border-slate-200 px-8 py-4 rounded-md shadow-lg">
+          <div className="text-2xl font-semibold text-slate-700">
+            Contract Info
+          </div>
+          <div className="flex mt-2 items-center">
+            <div className="text-xl font-semibold text-slate-500 mr-4">
+              Chain:
+            </div>
+            <div className="text-xl font-semibold text-slate-700">
+              {task.chain}
+            </div>
+          </div>
+          <div className="flex items-center mt-2">
+            <div className="text-xl font-semibold text-slate-500 mr-4">
+              Address:
+            </div>
+            <a
+              className="box-border border-b border-cyan-400 hover:border-b-2"
+              target="_blank"
+              href={`${chainConfig.chain.blockExplorers.default.url}/address/${task.contract_address}`}
+            >
+              {task.contract_address.slice(0, 6)}...
+              {task.contract_address.slice(-5)}
+            </a>
+          </div>
+          <div className="flex items-center mt-2">
+            <div className="text-xl font-semibold text-slate-500 mr-4">
+              Deploy Hash:
+            </div>
+            <a
+              className="border-b border-cyan-400 hover:border-b-2"
+              target="_blank"
+              href={`${chainConfig.chain.blockExplorers.default.url}/tx/${task.deploy_hash}`}
+            >
+              {task.deploy_hash.slice(0, 6)}...{task.deploy_hash.slice(-5)}
+            </a>
+          </div>
+        </div>
+      ) : null}
+      <div className="mt-8">
+        {loading ? (
+          <></>
+        ) : (
+          <>
+            {joinedList.length > 0 ? (
+              <>
+                <div className="flex flex-wrap">
+                  {joinedList.map((item) => (
+                    <Card
+                      onRefresh={() => fetchList}
+                      key={String(item._id + item.status)}
+                      item={item}
+                      task={task}
+                    />
+                  ))}
+                </div>
+              </>
+            ) : (
+              <Empty description={'No More User'} />
+            )}
+          </>
+        )}
       </div>
-      {
-        loading
-          ? (
-            <></>
-          )
-          : (
-            <>
-              {
-                joinedList.length > 0
-                  ? (
-                    <>
-                      <div className='flex flex-wrap'>
-                        {
-                          joinedList.map((item) => (
-                            <Card onRefresh={() => fetchList} key={String(item._id + item.status)}
-                              item={item}
-                              task={task} />
-                          ))
-                        }
-                      </div>
-                    </>
-                  )
-                  : <Empty description={'No More User'} />
-              }
-            </>
-          )
-      }
     </>
   )
 }

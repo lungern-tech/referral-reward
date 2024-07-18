@@ -1,6 +1,4 @@
-import Profile from "@/components/profile"
+import Profile from '@/components/profile'
 export default function () {
-  return (
-    <Profile />
-  )
+  return <Profile />
 }
