@@ -2,7 +2,6 @@ import CdnImage from '@/components/cdn-image'
 import Submit from '@/components/pay/submit'
 import mongoClient from '@/lib/mongodb'
 import type Task from '@/models/Task'
-import { TaskStatus } from '@/models/Task'
 import { format } from '@/utils/DateFormat'
 import { ObjectId } from 'mongodb'
 
@@ -42,7 +41,7 @@ export default async function ({ params }: { params: { id: string } }) {
         <div className="mt-5">
           <div
             className="text-slate-500 font-medium raw-html"
-            dangerouslySetInnerHTML={{ __html: task.description || '<p></p>' }}
+            dangerouslySetInnerHTML={{ __html: task.task || '<p></p>' }}
           ></div>
         </div>
       </div>
@@ -50,7 +49,7 @@ export default async function ({ params }: { params: { id: string } }) {
       <div className="mt-5">
         <div
           className="text-slate-500 font-medium raw-html"
-          dangerouslySetInnerHTML={{ __html: task.task || '<p></p>' }}
+          dangerouslySetInnerHTML={{ __html: task.description || '<p></p>' }}
         ></div>
       </div>
       <div className="mt-8 font-bold text-xl text-slate-700">Cost Overview</div>
@@ -70,14 +69,11 @@ export default async function ({ params }: { params: { id: string } }) {
           </div>
         </div>
       </div>
-      {task.status === TaskStatus.Created ? (
-        <Submit
-          className="mt-8"
-          task={task}
-        />
-      ) : (
-        <div>Contract has been deployed</div>
-      )}
+
+      <Submit
+        className="mt-8"
+        task={task}
+      />
     </div>
   )
 }

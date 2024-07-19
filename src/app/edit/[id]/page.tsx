@@ -1,7 +1,6 @@
 'use client'
 import CdnImage from '@/components/cdn-image'
 import Task, { TaskStatus } from '@/models/Task'
-import getPrice from '@/service/getPrice'
 import ChainMap from '@/utils/ChainMap'
 import { firstOfDay } from '@/utils/DateFormat'
 import {
@@ -15,7 +14,6 @@ import dayjs from 'dayjs'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { QuillOptions } from 'quill'
-import Delta from 'quill-delta'
 import { useEffect, useState } from 'react'
 import { useChainId } from 'wagmi'
 import './index.scss'
@@ -36,10 +34,12 @@ const guideConfig: Partial<QuillOptions> = {
   placeholder: 'Key Points to Achieve',
 }
 
-export default function create() {
+export default function create({ params: { id } }: { params: { id: string } }) {
   const router = useRouter()
 
   const chainId = useChainId()
+  const [loading, setLoading] = useState(false)
+  const [submitLoading, setSubmitLoading] = useState(false)
 
   const [taskInfo, setTaskInfo] = useState<Partial<Task>>({
     title: '',
@@ -50,44 +50,39 @@ export default function create() {
     reward: null,
     reward_in_usd: null,
     reward_count: null,
-    status: TaskStatus.Created,
     cover_image: '',
     description: '',
     reward_token: 'USDT',
     token_price_usd: 0,
   })
 
-  const [loading, setLoading] = useState(false)
-
-  const [submitLoading, setSubmitLoading] = useState(false)
-
   useEffect(() => {
-    let diff = dayjs(taskInfo.end_time).diff(taskInfo.start_time, 'minutes')
-    const day = diff / (24 * 60)
-    const hour = (diff % (24 * 60)) / 60
-    const minute = (diff % (24 * 60)) % 60
-    setTaskInfo({
-      ...taskInfo,
-      duration: `${day} days ${hour} hours ${minute} minutes`,
-    })
-  }, [taskInfo.start_time, taskInfo.end_time])
-
-  useEffect(() => {
-    getPrice(chainId).then((data) => {
-      if (data.data.length > 0) {
-        setTaskInfo({
-          ...taskInfo,
-          token_price_usd: Number(data.data[0].lastPrice),
+    if (id) {
+      fetch(`/api/task?id=${id}`)
+        .then((res) => res.json())
+        .then((data: Task) => {
+          console.log('set task: ', data)
+          setTaskInfo(data)
         })
-      }
-    })
-  }, [taskInfo.reward_token])
+    }
+  }, [id])
+
+  // useEffect(() => {
+  //   getPrice(chainId).then((data) => {
+  //     if (data.data.length > 0) {
+  //       setTaskInfo({
+  //         ...taskInfo,
+  //         token_price_usd: Number(data.data[0].lastPrice),
+  //       })
+  //     }
+  //   })
+  // }, [taskInfo.reward_token])
 
   const updateTaskInfo = (params: Record<string, unknown>) => {
     setTaskInfo({ ...taskInfo, ...params })
   }
 
-  const createNewReward = () => {
+  const updateReward = () => {
     if (Object.values(taskInfo).some((e) => !e)) {
       notification.error({
         message: 'Please complete all required fields',
@@ -96,12 +91,20 @@ export default function create() {
     }
     setSubmitLoading(true)
     fetch('/api/task', {
-      method: 'POST',
-      body: JSON.stringify(taskInfo),
+      method: 'PATCH',
+      body: JSON.stringify({
+        ...taskInfo,
+        task_id: taskInfo._id,
+        _id: undefined,
+      }),
     })
       .then((res) => res.json())
       .then((data: { insertedId: string }) => {
-        router.push(`/confirm/${data.insertedId}`)
+        if (taskInfo.status === TaskStatus.Created) {
+          router.push(`/confirm/${taskInfo._id}`)
+        } else {
+          router.push('/edit/success')
+        }
       })
       .finally(() => {
         setSubmitLoading(false)
@@ -173,7 +176,7 @@ export default function create() {
     updateTaskInfo({ reward_in_usd, reward })
   }
 
-  const cancelCreate = () => {
+  const cancel = () => {
     router.back()
   }
 
@@ -305,12 +308,16 @@ export default function create() {
       )}
       <div className="mt-10 text-xl font-bold text-slate-700">Task Guide</div>
       <div className="mt-5">
-        <Editor
-          options={guideConfig}
-          defaultValue={new Delta()}
-          onTextChange={taskChange}
-          className="mt-5 rounded-sm text-slate-900"
-        />
+        {taskInfo.task ? (
+          <Editor
+            options={guideConfig}
+            rawContent={taskInfo.task}
+            onTextChange={taskChange}
+            className="mt-5 rounded-sm text-slate-900"
+          />
+        ) : (
+          <></>
+        )}
       </div>
       <div className="mt-10 text-xl font-bold text-slate-700">Proof Method</div>
       <Select
@@ -322,26 +329,28 @@ export default function create() {
       </Select>
       <div className="text-xl font-bold mt-10 text-slate-700">Description</div>
       <div className="mt-5">
-        <Editor
-          options={editorConfig}
-          defaultValue={new Delta()}
-          onTextChange={textChange}
-          className="mt-5 rounded-sm text-slate-900"
-        />
+        {taskInfo.description ? (
+          <Editor
+            options={editorConfig}
+            rawContent={taskInfo.description}
+            onTextChange={textChange}
+            className="mt-5 rounded-sm text-slate-900"
+          />
+        ) : null}
       </div>
       <div className="mt-10">
         <Button
           loading={submitLoading}
           size="large"
           type="primary"
-          onClick={createNewReward}
+          onClick={updateReward}
         >
           Submit
         </Button>
         <Button
           size="large"
           className="ml-4"
-          onClick={cancelCreate}
+          onClick={cancel}
         >
           Cancel
         </Button>

@@ -11,7 +11,7 @@ export default function ({
 }) {
   const link = () => {
     if (task.status === TaskStatus.Created) {
-      return `/pay/${task._id}`
+      return `/confirm/${task._id}`
     }
     return `/account/created/${task._id}`
   }
@@ -21,6 +21,9 @@ export default function ({
       href={link()}
     >
       <div className="p-2 border border-slate-200 rounded-lg relative">
+        <div className="absolute -left-0 -top-0 px-2 rounded-br-md text-sm bg-green-500 text-white">
+          {task.status}
+        </div>
         <CdnImage
           className="rounded-lg"
           src={`${task.cover_image}`}

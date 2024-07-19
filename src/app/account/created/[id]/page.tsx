@@ -19,7 +19,7 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    fetch(`/api/task/search?id=${id}`)
+    fetch(`/api/task?id=${id}`)
       .then(async (res) => await res.json())
       .then((data) => {
         setTask(data)

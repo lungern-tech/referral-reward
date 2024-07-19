@@ -16,6 +16,7 @@ interface Props {
   style?: React.CSSProperties
   readOnly?: boolean
   defaultValue?: Delta
+  rawContent?: string
   options?: Partial<QuillOptions>
   onTextChange?: (latest: string) => void
   onSelectionChange?: (
@@ -53,11 +54,13 @@ const Editor = forwardRef<Quill, Props>(
       onSelectionChange,
       options,
       className,
+      rawContent,
     },
     ref
   ) => {
     const containerRef = useRef(null)
     const defaultValueRef = useRef(defaultValue)
+    const rawContentRef = useRef(rawContent)
     const onTextChangeRef = useRef(onTextChange)
     const onSelectionChangeRef = useRef(onSelectionChange)
     const localRef = useRef<Quill>()
@@ -97,6 +100,10 @@ const Editor = forwardRef<Quill, Props>(
       localRef.current = quill
       if (defaultValueRef.current) {
         quill.setContents(defaultValueRef.current)
+      }
+      if (rawContentRef.current) {
+        const delta = quill.clipboard.convert({ html: rawContentRef.current })
+        quill.setContents(delta)
       }
 
       quill.on(Quill.events.TEXT_CHANGE, (...args) => {

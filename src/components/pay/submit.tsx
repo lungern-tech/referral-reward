@@ -7,11 +7,7 @@ import { Button, Modal, notification } from 'antd'
 import { useRouter } from 'next/navigation'
 import { useContext, useEffect } from 'react'
 import { decodeEventLog, parseEther } from 'viem'
-import {
-  useAccount,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from 'wagmi'
+import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 
 export default function ({
   task,
@@ -27,7 +23,6 @@ export default function ({
   const { isLoading, isSuccess, data } = useWaitForTransactionReceipt({
     hash,
   })
-  const { address } = useAccount()
 
   const {
     reward,
@@ -87,8 +82,8 @@ export default function ({
       },
       {
         onSuccess: async (data) => {
-          fetch('/api/task/update', {
-            method: 'POST',
+          fetch('/api/task', {
+            method: 'PATCH',
             body: JSON.stringify({
               deploy_hash: hash,
               task_id,
@@ -190,8 +185,8 @@ export default function ({
             }
             const contractAddress =
               emitArgs.contractAddress || emitArgs.reward_address
-            fetch('/api/task/update', {
-              method: 'POST',
+            fetch('/api/task', {
+              method: 'PATCH',
               body: JSON.stringify({
                 contract_address: contractAddress,
                 deploy_hash: hash,
@@ -232,14 +227,63 @@ export default function ({
     }
   }, [isSuccess])
 
+  const handleCancel = () => {
+    router.push(`/account/created`)
+  }
+
+  const editCampaign = () => {
+    router.push(`/edit/${task_id}`)
+  }
+
+  const handleDelete = () => {
+    Modal.confirm({
+      title: 'Are you sure to delete this task?',
+      onOk: () => {
+        fetch('/api/task', {
+          method: 'DELETE',
+          body: JSON.stringify({
+            task_id,
+          }),
+        })
+          .then((res) => res.json())
+          .then(() => {
+            notification.success({ message: 'Task deleted successfully' })
+            router.push('/account/created')
+          })
+      },
+    })
+  }
+
   return (
     <>
+      {task.status === TaskStatus.Created ? (
+        <Button
+          className={className}
+          loading={isLoading}
+          onClick={createReward}
+          type="primary"
+        >
+          Submit
+        </Button>
+      ) : null}
       <Button
-        className={className}
-        loading={isLoading}
-        onClick={createReward}
+        className="ml-4"
+        onClick={editCampaign}
       >
-        Submit
+        Edit
+      </Button>
+      <Button
+        className="ml-4"
+        danger
+        onClick={handleDelete}
+      >
+        Delete
+      </Button>
+      <Button
+        className="ml-4"
+        onClick={handleCancel}
+      >
+        Cancel
       </Button>
     </>
   )
