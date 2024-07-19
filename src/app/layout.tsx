@@ -40,6 +40,13 @@ export default async function RootLayout({
       lang="en"
       className="h-full"
     >
+      <head>
+        <link
+          rel="shortcut icon"
+          href="/favicon.ico"
+          sizes="any"
+        />
+      </head>
       <body className="dark custom-scrollbar h-full">
         <WagmiProvider config={wagmiConfig}>
           <QueryClientProvider>

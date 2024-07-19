@@ -39,3 +39,27 @@ export function firstOfDay(date: Date) {
   date.setMilliseconds(0)
   return date
 }
+
+export function formatCountdown(countdown: number) {
+  const secondUnit = 1000
+  const minuteUnit = secondUnit * 60;
+  const hourUnit = minuteUnit * 60;
+  const dayUnit = hourUnit * 24;
+
+  const day = Math.floor(countdown / dayUnit)
+  const hour = Math.floor((countdown % dayUnit) / hourUnit)
+  const minute = Math.floor((countdown % hourUnit) / minuteUnit)
+  const second = Math.floor((countdown % minuteUnit) / secondUnit)
+  
+  return {
+    day,
+    hour,
+    minute,
+    second, 
+  }
+}
+
+export function simpleCountdown(countdown: number) {
+  const { day, hour, minute, second } = formatCountdown(countdown)
+  return `${String(day).padStart(2, '0')}Days ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:${String(second).padStart(2, '0')}`
+}

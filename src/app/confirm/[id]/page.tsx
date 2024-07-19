@@ -5,6 +5,10 @@ import type Task from '@/models/Task'
 import { format } from '@/utils/DateFormat'
 import { ObjectId } from 'mongodb'
 
+export const metadata = {
+  title: 'Campaign Confirmation',
+}
+
 const getTask = async (id: string) => {
   const task = await mongoClient
     .collection<Task>('task')
@@ -70,10 +74,7 @@ export default async function ({ params }: { params: { id: string } }) {
         </div>
       </div>
 
-      <Submit
-        className="mt-8"
-        task={task}
-      />
+      <Submit task={task} />
     </div>
   )
 }

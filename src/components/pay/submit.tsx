@@ -9,13 +9,7 @@ import { useContext, useEffect } from 'react'
 import { decodeEventLog, parseEther } from 'viem'
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 
-export default function ({
-  task,
-  className,
-}: {
-  task: Task
-  className: string
-}) {
+export default function ({ task }: { task: Task }) {
   const { user } = useContext(UserContext)
 
   const router = useRouter()
@@ -255,10 +249,9 @@ export default function ({
   }
 
   return (
-    <>
+    <div className="flex gap-4 mt-8">
       {task.status === TaskStatus.Created ? (
         <Button
-          className={className}
           loading={isLoading}
           onClick={createReward}
           type="primary"
@@ -266,25 +259,14 @@ export default function ({
           Submit
         </Button>
       ) : null}
+      <Button onClick={editCampaign}>Edit</Button>
       <Button
-        className="ml-4"
-        onClick={editCampaign}
-      >
-        Edit
-      </Button>
-      <Button
-        className="ml-4"
         danger
         onClick={handleDelete}
       >
         Delete
       </Button>
-      <Button
-        className="ml-4"
-        onClick={handleCancel}
-      >
-        Cancel
-      </Button>
-    </>
+      <Button onClick={handleCancel}>Cancel</Button>
+    </div>
   )
 }

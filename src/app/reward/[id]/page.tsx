@@ -8,6 +8,11 @@ import User from '@/models/User'
 import { format } from '@/utils/DateFormat'
 import { CalendarOutlined } from '@ant-design/icons'
 import { ObjectId } from 'mongodb'
+import EndTime from './EndTime'
+
+export const metadata = {
+  title: 'Join And Earn',
+}
 
 export default async function ({ params }: { params: { id: string } }) {
   const task = await client
@@ -57,6 +62,7 @@ export default async function ({ params }: { params: { id: string } }) {
       },
     ])
     .toArray()) as Array<Interaction & { user: User }>
+
   return (
     <div className="grid grid-cols-5">
       <div className="col-span-3 pr-12 pb-8 border-r border-slate-200 pt-8">
@@ -82,7 +88,7 @@ export default async function ({ params }: { params: { id: string } }) {
         </div>
         <div className="border border-b-0 border-slate-200"></div>
         <div className="mt-8 font-bold text-2xl text-slate-700">Task</div>
-        <div className="mt-4 text-xl rendered-html text-slate-500">
+        <div className="mt-4 font-medium raw-html text-slate-500">
           <div
             dangerouslySetInnerHTML={{ __html: task.task || '<p></p>' }}
           ></div>
@@ -98,7 +104,7 @@ export default async function ({ params }: { params: { id: string } }) {
         <div className="mt-8 font-bold text-2xl pt-8 border-t text-slate-700 border-slate-200">
           Guide
         </div>
-        <div className="mt-8 text-xl rendered-html text-slate-500">
+        <div className="mt-8 font-medium raw-html text-slate-500">
           <div
             dangerouslySetInnerHTML={{ __html: task.description || '<p></p>' }}
           ></div>
@@ -110,10 +116,10 @@ export default async function ({ params }: { params: { id: string } }) {
           <div className="border-b border-slate-200">
             <div className="flex h-12 justify-center items-center font-semibold text-slate-700">
               <CalendarOutlined className="mr-2" />
-              <span className="mr-2 ">Campaign Ends In</span>
-              <span>5 Days</span>
+              <span className="mr-2 text-slate-600">Campaign Ends In</span>
+              <EndTime endTime={task.end_time} />
             </div>
-            <div className="text-center pb-4 text-slate-600">
+            <div className="text-center pb-4">
               (UTC+8) {format(new Date(task.start_time), 'YYYY-MM-DD hh:mm')} ～{' '}
               {format(new Date(task.end_time), 'MM-DD hh:mm')}
             </div>
