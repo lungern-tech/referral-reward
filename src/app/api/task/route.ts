@@ -59,6 +59,8 @@ export async function POST(request: NextRequest) {
     _id: undefined,
     wallet: wallet,
     creator: user._id,
+    start_time: new Date(body.start_time),
+    end_time: new Date(body.end_time),
     created_at: new Date(),
     updated_at: new Date(),
   })

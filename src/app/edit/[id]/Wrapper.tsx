@@ -1,6 +1,6 @@
 'use client'
 import CdnImage from '@/components/cdn-image'
-import Task, { TaskStatus } from '@/models/Task'
+import Task, { DeployStatus } from '@/models/Task'
 import ChainMap from '@/utils/ChainMap'
 import { firstOfDay } from '@/utils/DateFormat'
 import {
@@ -104,7 +104,7 @@ export default function create({ id }: { id: string }) {
     })
       .then((res) => res.json())
       .then((data: { insertedId: string }) => {
-        if (taskInfo.status === TaskStatus.Created) {
+        if (taskInfo.status === DeployStatus.Created) {
           router.push(`/confirm/${taskInfo._id}`)
         } else {
           router.push('/edit/success')

@@ -1,7 +1,7 @@
 'use client'
 import { abi } from '@/abi/RewardFactory.sol/RewardFactory.json'
 import UserContext from '@/context/UserContext'
-import Task, { TaskStatus } from '@/models/Task'
+import Task, { DeployStatus } from '@/models/Task'
 import ChainMap from '@/utils/ChainMap'
 import { Button, Modal, notification } from 'antd'
 import { useRouter } from 'next/navigation'
@@ -81,7 +81,7 @@ export default function ({ task }: { task: Task }) {
             body: JSON.stringify({
               deploy_hash: hash,
               task_id,
-              status: TaskStatus.Deploying,
+              status: DeployStatus.Deploying,
             }),
           })
             .then((res) => res.json())
@@ -185,7 +185,7 @@ export default function ({ task }: { task: Task }) {
                 contract_address: contractAddress,
                 deploy_hash: hash,
                 task_id,
-                status: TaskStatus.Deployed,
+                status: DeployStatus.Deployed,
               }),
             })
               .then(async (res) => await res.json())
@@ -250,7 +250,7 @@ export default function ({ task }: { task: Task }) {
 
   return (
     <div className="flex gap-4 mt-8">
-      {task.status === TaskStatus.Created ? (
+      {task.status === DeployStatus.Created ? (
         <Button
           loading={isLoading}
           onClick={createReward}

@@ -1,7 +1,7 @@
 import Reward from '@/components/card/Reward'
 import HorizontalScroll from '@/components/horizontal-scroll'
 import client from '@/lib/mongodb'
-import Task, { TaskStatus } from '@/models/Task'
+import Task, { DeployStatus } from '@/models/Task'
 import User from '@/models/User'
 import { Empty } from 'antd'
 
@@ -11,7 +11,7 @@ export default async function Home() {
     .aggregate([
       {
         $match: {
-          status: TaskStatus.Deployed,
+          status: DeployStatus.Deployed,
         },
       },
       {

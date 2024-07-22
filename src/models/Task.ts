@@ -1,11 +1,20 @@
 import { ObjectId } from "mongodb"
 
 
-export enum TaskStatus {
+export enum DeployStatus {
   Created = "created",
   Deployed = "deployed",
   Deploying = "deploying",
   Failed = "failed"
+}
+
+export enum TaskStatus {
+  ALL = "",
+  Pending = "pending",
+  Upcoming = "upcoming",
+  Ongoing = "ongoing",
+  Finished = "finished",
+  Expired = "expired"
 }
 
 export default interface Task {
@@ -18,6 +27,7 @@ export default interface Task {
   duration: string
   reward: number
   reward_count: number
+  reward_sent_count: number
   reward_in_usd: number
   reward_token: string
   token_price_usd: number

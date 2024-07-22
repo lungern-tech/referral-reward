@@ -10,12 +10,9 @@ export default function ({
   className?: string
   endTime: Date
 }) {
-  const [countTime, setCountTime] = useState(
-    simpleCountdown(new Date(endTime).getTime() - Date.now())
-  )
+  const [countTime, setCountTime] = useState('')
 
   useEffect(() => {
-    console.log(endTime)
     let end_date = new Date(endTime)
     let pointer = -1
     const timer = () => {

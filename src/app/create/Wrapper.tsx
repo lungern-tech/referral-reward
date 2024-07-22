@@ -1,6 +1,6 @@
 'use client'
 import CdnImage from '@/components/cdn-image'
-import Task, { TaskStatus } from '@/models/Task'
+import Task, { DeployStatus } from '@/models/Task'
 import getPrice from '@/service/getPrice'
 import ChainMap from '@/utils/ChainMap'
 import { firstOfDay } from '@/utils/DateFormat'
@@ -50,7 +50,7 @@ export default function create() {
     reward: null,
     reward_in_usd: null,
     reward_count: null,
-    status: TaskStatus.Created,
+    status: DeployStatus.Created,
     cover_image: '',
     description: '',
     reward_token: 'USDT',

@@ -1,5 +1,5 @@
 import CdnImage from '@/components/cdn-image'
-import Task, { TaskStatus } from '@/models/Task'
+import Task, { DeployStatus } from '@/models/Task'
 import Link from 'next/link'
 
 export default function ({
@@ -10,7 +10,7 @@ export default function ({
   className?: string
 }) {
   const link = () => {
-    if (task.status === TaskStatus.Created) {
+    if (task.status === DeployStatus.Created) {
       return `/confirm/${task._id}`
     }
     return `/account/created/${task._id}`
