@@ -14,7 +14,7 @@ function ContextProvider({
   children: ReactNode
   initialUser: User
 }) {
-  const [user, setUser] = useState()
+  const [user, setUser] = useState<User>()
   const getUserInfo = () => {
     update()
   }
