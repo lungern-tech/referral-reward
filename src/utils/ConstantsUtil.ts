@@ -26,14 +26,6 @@ export const ConstantsUtil = {
   },
   CustomWallets: [
     ...customWallet,
-    {
-      id: 'react-wallet-v2',
-      name: 'react-wallet-v2',
-      homepage: WALLET_URL,
-      mobile_link: WALLET_URL,
-      desktop_link: WALLET_URL,
-      webapp_link: WALLET_URL
-    },
   ],
   ProjectId: projectId
 }
