@@ -23,7 +23,7 @@ export async function POST(request) {
     },
     created_at: new Date(),
     user_id: new ObjectId(session.id),
-    status: InteractStatus.Joined
+    status: InteractStatus.Pending
   })
   return NextResponse.json({ message: 'Join in successfully' });
 }
