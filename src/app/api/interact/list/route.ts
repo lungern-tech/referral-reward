@@ -1,10 +1,6 @@
 import client from "@/lib/mongodb"
 import Interaction from "@/models/Interaction"
-import { ObjectId } from "mongodb"
-export function GET() {
-
-}
-
+import { Document, ObjectId } from "mongodb"
 
 export async function POST(request: Request) {
   const data = await request.formData()
@@ -12,7 +8,7 @@ export async function POST(request: Request) {
   const pageNumber = Number(data.get('page_number'))
   const task_id = data.get("task_id")
   const status = data.get("status")
-  const searchParams = [
+  const searchParams: Array<Document> = [
     {
       $match: {
         task_id: new ObjectId(String(task_id))

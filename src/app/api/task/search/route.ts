@@ -1,14 +1,14 @@
 import { auth } from "@/app/auth";
 import client from "@/lib/mongodb";
 import Task, { DeployStatus, TaskStatus } from "@/models/Task";
-import { ObjectId } from "mongodb";
+import { Document, ObjectId } from "mongodb";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   const session = await auth()
   const { pageSize, pageNumber, status } = await request.json() as { pageSize: number, pageNumber: number, status: TaskStatus }
   console.log(session.userInfo._id)
-  const searchParams = [
+  const searchParams: Array<Document> = [
     {
       $match: {
         creator: new ObjectId(session.userInfo._id)

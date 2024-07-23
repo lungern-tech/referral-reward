@@ -7,9 +7,11 @@ export default function ({
   task,
   className,
   user,
+  status,
 }: {
   task: Task
   user: User
+  status?: string
   className?: string
 }) {
   return (
@@ -18,6 +20,11 @@ export default function ({
       href={`/reward/${task._id}`}
     >
       <div className="p-2 border border-slate-200 shadow-lg rounded-lg relative">
+        {status && (
+          <div className="absolute -left-0 -top-0 px-2 rounded-br-md text-sm bg-green-500 text-white">
+            {status}
+          </div>
+        )}
         <CdnImage
           className="rounded-lg object-cover h-40"
           src={`${task.cover_image}`}
