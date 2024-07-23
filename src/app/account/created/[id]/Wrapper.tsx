@@ -89,6 +89,11 @@ export default function Page({ id }: { id: string }) {
     }
   }, [task, filter, pageNumber])
 
+  const filterChange = (type: string) => {
+    setFilter(type as InteractStatus)
+    setPageNumber(1)
+  }
+
   return (
     <>
       {task && chainConfig ? (
@@ -137,7 +142,7 @@ export default function Page({ id }: { id: string }) {
         {filterList.map((e) => {
           return (
             <div
-              onClick={() => setFilter(e.type)}
+              onClick={() => filterChange(e.type)}
               className={`rounded-md bg-slate-400 text-white/80 px-2 py-1 cursor-pointer transition ${
                 filter === e.type ? '!bg-slate-500 !text-white' : ''
               }`}
