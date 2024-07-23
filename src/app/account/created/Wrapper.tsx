@@ -96,7 +96,7 @@ export default function created() {
           <Pagination
             defaultCurrent={1}
             current={pageNumber}
-            defaultPageSize={9}
+            defaultPageSize={pageSize}
             total={count}
           />
         </>

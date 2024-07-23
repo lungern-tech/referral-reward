@@ -1,12 +1,11 @@
 'use client'
 
-import UserContext from "@/context/UserContext";
-import User from '@/models/User';
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, type ReactNode } from 'react';
-import { useAccount } from "wagmi";
-
+import UserContext from '@/context/UserContext'
+import User from '@/models/User'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState, type ReactNode } from 'react'
+import { useAccount } from 'wagmi'
 
 function ContextProvider({
   children,
@@ -15,14 +14,14 @@ function ContextProvider({
   children: ReactNode
   initialUser: User
 }) {
-  const [user, setUser] = useState(initialUser)
+  const [user, setUser] = useState()
   const getUserInfo = () => {
     update()
   }
 
   const { update, data } = useSession()
 
-  const { address } = useAccount()
+  const { address, isConnected } = useAccount()
 
   const router = useRouter()
 
@@ -30,15 +29,17 @@ function ContextProvider({
 
   useEffect(() => {
     if (localAddress !== address && !!localAddress) {
-      router.push("/")
+      router.push('/')
     }
     setLocalAddress(address)
-
   }, [address])
 
   useEffect(() => {
-    setUser(data?.userInfo)
-  }, [data])
+    console.log('isConnected: ', isConnected)
+    if (isConnected) {
+      setUser(data?.userInfo)
+    }
+  }, [data, isConnected])
 
   return (
     <UserContext.Provider value={{ user, updateUser: getUserInfo }}>

@@ -1,12 +1,11 @@
 'use client'
 import { abi } from '@/abi/Reward.sol/Reward.json'
-import CdnImage from '@/components/cdn-image'
 import UserContext from '@/context/UserContext'
 import type Interaction from '@/models/Interaction'
 import type Task from '@/models/Task'
 import type User from '@/models/User'
 import ChainMap from '@/utils/ChainMap'
-import { notification } from 'antd'
+import { Image, notification } from 'antd'
 import { useContext, useEffect, useState } from 'react'
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 
@@ -138,16 +137,11 @@ export default function ReferralCard({
 
   return (
     <div className="w-1/3 border border-slate-200 transition hover:scale-105 shadow-md rounded-md relative overflow-hidden">
-      <div className="absolute -left-0 -top-0 px-2 rounded-br-md text-sm bg-green-500 text-white">
+      <div className="absolute -left-0 z-10 -top-0 px-2 rounded-br-md text-sm bg-green-500 text-white">
         {item.status}
       </div>
       <div>
-        <CdnImage
-          src={item.proof.image_link}
-          width={300}
-          height={100}
-          alt="proof"
-        />
+        <Image src={item.proof.image_link} />
       </div>
       <div className="flex my-2 text-sm items-center justify-around">
         <div

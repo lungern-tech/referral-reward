@@ -2,11 +2,11 @@ import { ObjectId } from "mongodb";
 
 export enum InteractStatus {
   Pending = 'pending',
-  Approved = 'approved',
-  Joined = 'joined',
   Rejected = 'rejected',
-  RewardSent = 'rewardSent'
+  RewardSent = 'rewardSent',
+  Success = "success"
 }
+
 export default interface Interaction {
   _id?: ObjectId | string
   task_id: ObjectId | string

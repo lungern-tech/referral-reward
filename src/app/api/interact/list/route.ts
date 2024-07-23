@@ -11,7 +11,8 @@ export async function POST(request: Request) {
   const pageSize = Number(data.get('page_size'))
   const pageNumber = Number(data.get('page_number'))
   const task_id = data.get("task_id")
-  const joinedList = await client.collection<Interaction>("interaction").aggregate([
+  const status = data.get("status")
+  const searchParams = [
     {
       $match: {
         task_id: new ObjectId(String(task_id))
@@ -37,6 +38,10 @@ export async function POST(request: Request) {
         totalCount: [{ $count: 'count' }]
       }
     },
-  ]).toArray()
+  ]
+  if (status !== 'ALL') {
+    searchParams[0].$match.status = status
+  }
+  const joinedList = await client.collection<Interaction>("interaction").aggregate(searchParams).toArray()
   return new Response(JSON.stringify(joinedList))
 }

@@ -1,9 +1,10 @@
 'use client'
 import type Interaction from '@/models/Interaction'
+import { InteractStatus } from '@/models/Interaction'
 import type Task from '@/models/Task'
 import type User from '@/models/User'
 import ChainMap, { IChainConfig } from '@/utils/ChainMap'
-import { Empty } from 'antd'
+import { Empty, Pagination, Skeleton } from 'antd'
 import { useEffect, useState } from 'react'
 import Card from './Card'
 
@@ -16,11 +17,31 @@ type IJoinItem = Interaction & { user: User }
 export default function Page({ id }: { id: string }) {
   const [task, setTask] = useState<Task>(null)
 
-  const pageSize = 10
+  const pageSize = 9
   const [pageNumber, setPageNumber] = useState(1)
   const [joinedList, setJoinedList] = useState<IJoinItem[]>([])
   const [totalCount, setTotalCount] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [filter, setFilter] = useState(InteractStatus.Pending)
+
+  const filterList = [
+    {
+      type: 'ALL',
+      label: 'ALL',
+    },
+    {
+      type: InteractStatus.Pending,
+      label: 'Pending',
+    },
+    {
+      type: InteractStatus.Success,
+      label: 'Success',
+    },
+    {
+      type: InteractStatus.Rejected,
+      label: 'Rejected',
+    },
+  ]
 
   useEffect(() => {
     fetch(`/api/task?id=${id}`)
@@ -39,6 +60,7 @@ export default function Page({ id }: { id: string }) {
     formData.append('task_id', String(task._id))
     formData.append('page_number', pageNumber.toString())
     formData.append('page_size', pageSize.toString())
+    formData.append('status', filter)
     fetch('/api/interact/list', {
       method: 'POST',
       body: formData,
@@ -65,7 +87,7 @@ export default function Page({ id }: { id: string }) {
       console.log(ChainMap, task.chain, ChainMap[task.chain])
       setChainConfig(ChainMap[task.chain])
     }
-  }, [task])
+  }, [task, filter, pageNumber])
 
   return (
     <>
@@ -108,7 +130,24 @@ export default function Page({ id }: { id: string }) {
             </a>
           </div>
         </div>
-      ) : null}
+      ) : (
+        <Skeleton />
+      )}
+      <div className="flex gap-2 my-4">
+        {filterList.map((e) => {
+          return (
+            <div
+              onClick={() => setFilter(e.type)}
+              className={`rounded-md bg-slate-400 text-white/80 px-2 py-1 cursor-pointer transition ${
+                filter === e.type ? '!bg-slate-500 !text-white' : ''
+              }`}
+              key={e.type}
+            >
+              {e.label}
+            </div>
+          )
+        })}
+      </div>
       <div className="mt-8">
         {loading ? (
           <></>
@@ -116,19 +155,26 @@ export default function Page({ id }: { id: string }) {
           <>
             {joinedList.length > 0 ? (
               <>
-                <div className="flex flex-wrap">
+                <div className="flex flex-wrap mb-4">
                   {joinedList.map((item) => (
                     <Card
-                      onRefresh={() => fetchList}
+                      onRefresh={() => fetchList()}
                       key={String(item._id + item.status)}
                       item={item}
                       task={task}
                     />
                   ))}
                 </div>
+                <Pagination
+                  defaultCurrent={1}
+                  total={totalCount}
+                  current={pageNumber}
+                  defaultPageSize={pageSize}
+                  onChange={(page) => setPageNumber(page)}
+                />
               </>
             ) : (
-              <Empty description={'No More User'} />
+              <Empty />
             )}
           </>
         )}
