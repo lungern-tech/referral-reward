@@ -12,6 +12,17 @@ export default async function Home() {
       {
         $match: {
           status: DeployStatus.Deployed,
+          start_time: {
+            $lt: new Date(),
+          },
+          end_time: {
+            $gt: new Date(),
+          },
+        },
+      },
+      {
+        $sort: {
+          start_time: -1,
         },
       },
       {
@@ -27,6 +38,7 @@ export default async function Home() {
       },
     ])
     .toArray()) as Array<Task & { user: User }>
+  console.log(`list: `, list)
   return (
     <div className="w-full">
       <div className="mt-8 text-slate-700 font-bold text-2xl">

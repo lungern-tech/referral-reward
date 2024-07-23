@@ -63,9 +63,9 @@ export default function create() {
 
   useEffect(() => {
     let diff = dayjs(taskInfo.end_time).diff(taskInfo.start_time, 'minutes')
-    const day = diff / (24 * 60)
-    const hour = (diff % (24 * 60)) / 60
-    const minute = (diff % (24 * 60)) % 60
+    const day = Math.floor(diff / (24 * 60))
+    const hour = Math.floor((diff % (24 * 60)) / 60)
+    const minute = Math.floor((diff % (24 * 60)) % 60)
     setTaskInfo({
       ...taskInfo,
       duration: `${day} days ${hour} hours ${minute} minutes`,

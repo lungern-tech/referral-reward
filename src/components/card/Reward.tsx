@@ -1,5 +1,6 @@
 import Task from '@/models/Task'
 import User from '@/models/User'
+import { round } from 'mathjs'
 import Link from 'next/link'
 import CdnImage from '../cdn-image'
 
@@ -49,8 +50,9 @@ export default function ({
           <div className="label">
             <div className="rounded-md border-slate-200 border inline-block px-2 py-1 font-semibold">
               <span className="text-green-500 mr-1">
-                {Math.round(
-                  task.reward * task.reward_count * task.token_price_usd
+                {round(
+                  task.reward * task.reward_count * task.token_price_usd,
+                  2
                 )}
               </span>
               USDT

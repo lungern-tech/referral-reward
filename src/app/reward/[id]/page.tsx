@@ -116,8 +116,14 @@ export default async function ({ params }: { params: { id: string } }) {
           <div className="border-b border-slate-200">
             <div className="flex h-12 justify-center items-center font-semibold text-slate-700">
               <CalendarOutlined className="mr-2" />
-              <span className="mr-2 text-slate-600">Campaign Ends In</span>
-              <EndTime endTime={task.end_time} />
+              {new Date(task.end_time).getTime() < Date.now() ? (
+                <span className="mr-2 text-slate-600">Campaign Ended</span>
+              ) : (
+                <>
+                  <span className="mr-2 text-slate-600">Campaign Ends In</span>
+                  <EndTime endTime={task.end_time} />
+                </>
+              )}
             </div>
             <div className="text-center pb-4">
               (UTC+8) {format(new Date(task.start_time), 'YYYY-MM-DD hh:mm')} ～{' '}
