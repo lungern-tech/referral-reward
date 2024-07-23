@@ -7,7 +7,6 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   const session = await auth()
   const { pageSize, pageNumber, status } = await request.json() as { pageSize: number, pageNumber: number, status: TaskStatus }
-  console.log(session.userInfo._id)
   const searchParams: Array<Document> = [
     {
       $match: {

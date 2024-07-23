@@ -18,7 +18,6 @@ export default function ({
     const timer = () => {
       let timeStr = simpleCountdown(end_date.getTime() - Date.now())
       setCountTime(timeStr)
-      console.log(timeStr)
       pointer = window.setTimeout(() => {
         timer()
       }, 1000)

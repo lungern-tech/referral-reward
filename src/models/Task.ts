@@ -31,7 +31,7 @@ export default interface Task {
   reward_in_usd: number
   reward_token: string
   token_price_usd: number
-  status: "created" | "active" | "inactive" | "end"
+  status: DeployStatus
   created_at: Date,
   updated_at: Date,
   deploy_hash: string

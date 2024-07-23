@@ -34,7 +34,7 @@ export default function Page({ id }: { id: string }) {
       label: 'Pending',
     },
     {
-      type: InteractStatus.Success,
+      type: InteractStatus.RewardSent,
       label: 'Success',
     },
     {

@@ -65,7 +65,6 @@ export default function create({ id }: { id: string }) {
       fetch(`/api/task?id=${id}`)
         .then((res) => res.json())
         .then((data: Task) => {
-          console.log('set task: ', data)
           setTaskInfo(data)
         })
     }

@@ -3,7 +3,7 @@ import CdnImage from '@/components/cdn-image'
 import Proof from '@/components/proof'
 import client from '@/lib/mongodb'
 import Interaction, { InteractStatus } from '@/models/Interaction'
-import Task from '@/models/Task'
+import Task, { DeployStatus } from '@/models/Task'
 import User from '@/models/User'
 import { format } from '@/utils/DateFormat'
 import { CalendarOutlined } from '@ant-design/icons'
@@ -63,6 +63,19 @@ export default async function ({ params }: { params: { id: string } }) {
     ])
     .toArray()) as Array<Interaction & { user: User }>
 
+  const formatTaskStatus = (task: Task) => {
+    if (task.status === DeployStatus.Deployed) {
+      if (task.start_time > new Date()) {
+        return 'Upcoming'
+      } else if (task.end_time < new Date()) {
+        return 'Ended'
+      } else {
+        return 'Ongoing'
+      }
+    }
+    return ''
+  }
+
   return (
     <div className="grid grid-cols-5">
       <div className="col-span-3 pr-12 pb-8 border-r border-slate-200 pt-8">
@@ -78,7 +91,7 @@ export default async function ({ params }: { params: { id: string } }) {
         </div>
         <div className="flex mt-4 mb-8">
           <div className="text-green-500 bg-slate-200  px-4 py-1 rounded-md mr-2 font-semibold">
-            Ongoing
+            {formatTaskStatus(task)}
           </div>
           <div className="text-slate-500 bg-white px-4 py-1 rounded-md mr-2 font-semibold">
             (UTC+8)

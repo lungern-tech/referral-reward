@@ -81,7 +81,6 @@ export async function DELETE(request: Request) {
   const task = await client.collection<Task>("task").findOne({
     _id: new ObjectId(body.task_id)
   })
-  console.log(task.creator, session.userInfo._id)
   if (task.creator.toString() !== session.userInfo._id) {
     return NextResponse.json({ error: "User not creator" }, { status: 403 })
   }

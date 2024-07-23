@@ -70,16 +70,17 @@ export default function ({
             Join Campaign Successfully
           </div>
         ) : interaction && interaction.status === InteractStatus.RewardSent ? (
-          <div className="w-full text-center">
-            You have received the reward.{' '}
+          <div className="w-full text-center px-4 py-2 border text-slate-700 font-semibold shadow-md rounded-md mt-4">
+            Your reward has been sent.
             <a
+              className="text-green-500 underline mx-1"
               href={`${
                 ChainMap[task.chain].chain.blockExplorers.default.url
               }/tx/${interaction.transition_hash}`}
               target="_blank"
             >
               Check
-            </a>{' '}
+            </a>
             for more details
           </div>
         ) : (
