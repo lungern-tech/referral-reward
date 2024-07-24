@@ -5,6 +5,7 @@ import {
   XOutlined,
 } from '@ant-design/icons'
 import Image from 'next/image'
+import Link from 'next/link'
 
 const Footer = () => {
   return (
@@ -45,6 +46,15 @@ const Footer = () => {
           </div>
           <div className="text-slate-500">
             <div className="mt-4">
+              <Link
+                className="cursor-pointer underline"
+                target="_blank"
+                href="https://docs.referralreward.xyz/"
+              >
+                Docs
+              </Link>
+            </div>
+            <div className="mt-4">
               Blog
               {/* <span className="absolute text-xs rounded-tl-md rounded-br-md bg-gradient-to-r to-pink-500 from-purple-500  text-white px-1">
                 Soon
@@ -57,15 +67,16 @@ const Footer = () => {
               </span> */}
             </div>
             <div className="mt-4 relative">
-              <a
+              <Link
                 href="https://forms.gle/Hq1L8j4G1swbQBUd7"
                 target="_blank"
+                className="cursor-pointer underline"
               >
                 Feedback
                 <span className="absolute text-xs rounded-tl-md rounded-br-md bg-gradient-to-r to-pink-500 from-purple-500  text-white px-1">
                   New
                 </span>
-              </a>
+              </Link>
             </div>
           </div>
         </div>

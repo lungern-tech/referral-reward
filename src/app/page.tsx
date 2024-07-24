@@ -38,7 +38,6 @@ export default async function Home() {
       },
     ])
     .toArray()) as Array<Task & { user: User }>
-  console.log(`list: `, list)
   return (
     <div className="w-full">
       <div className="mt-8 text-slate-700 font-bold text-2xl">
