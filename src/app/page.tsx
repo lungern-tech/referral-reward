@@ -1,13 +1,13 @@
-import Reward from '@/components/card/Reward'
-import HorizontalScroll from '@/components/horizontal-scroll'
-import client from '@/lib/mongodb'
-import Task, { DeployStatus } from '@/models/Task'
-import User from '@/models/User'
-import { Empty } from 'antd'
+import Reward from "@/components/card/Reward"
+import HorizontalScroll from "@/components/horizontal-scroll"
+import client from "@/lib/mongodb"
+import Task, { DeployStatus } from "@/models/Task"
+import User from "@/models/User"
+import { Empty } from "antd"
 
 export default async function Home() {
   const list = (await client
-    .collection<Task>('task')
+    .collection<Task>("task")
     .aggregate([
       {
         $match: {
@@ -18,6 +18,7 @@ export default async function Home() {
           end_time: {
             $gt: new Date(),
           },
+          is_deleted: false,
         },
       },
       {
@@ -27,14 +28,14 @@ export default async function Home() {
       },
       {
         $lookup: {
-          from: 'user',
-          localField: 'creator',
-          foreignField: '_id',
-          as: 'user',
+          from: "user",
+          localField: "creator",
+          foreignField: "_id",
+          as: "user",
         },
       },
       {
-        $unwind: '$user',
+        $unwind: "$user",
       },
     ])
     .toArray()) as Array<Task & { user: User }>
